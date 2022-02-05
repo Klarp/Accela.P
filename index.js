@@ -46,7 +46,7 @@ module.exports.upDate = () => {
 
 // const osuApi = new osu.Api(osu_key);
 
-const modules = ['Admin', 'osu!', 'Fun', 'Utility', 'Owner'];
+const modules = ['osu!', 'Fun', 'Utility', 'Owner'];
 
 client.on('error', error => {
 	client.users.cache.get('186493565445079040').send('An error occured - check the console.');
