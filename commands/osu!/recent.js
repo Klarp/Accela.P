@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
 
 const osu = require('node-osu');
 const curl = require('curl');
@@ -140,8 +140,6 @@ module.exports = {
 					nmiss: nmiss,
 					acc_percent: acc_percent,
 				});
-
-				console.log(pp);
 
 				const maxPP = ppv2({ map: pMap, mods: mods });
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
 
 const osu = require('node-osu');
 
@@ -108,7 +108,6 @@ module.exports = {
 							where: { user_id: message.author.id },
 						});
 						if (upNum > 0) {
-							console.log('oink');
 							return message.reply(`Updated gamemode to osu!${mode}`);
 						} else {
 							return message.reply('No linked account found!');

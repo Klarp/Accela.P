@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
 
 const { MessageEmbed } = require('discord.js');
 const { inspect } = require('util');

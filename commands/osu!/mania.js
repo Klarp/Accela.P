@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
 
 // Shows wrong user (Might need to test on Gavin)
 // Add kiss, hug, slap commands maybe? (this is pretty meta)
@@ -35,8 +35,6 @@ module.exports = {
 		if (menUser) {
 			if (message.type === 'REPLY') menUser = null;
 		}
-
-		console.log(menUser);
 
 		if (args[0] && !menUser && !memberFlag) {
 			memberFlag = true;

@@ -1,7 +1,11 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
+
+// .force will use api instead of cache
 
 const { MessageEmbed } = require('discord.js');
+const { Client } = require('../../index.js');
 const { timeSince } = require('../../utils');
+
 
 module.exports = {
 	name: 'user-info',
@@ -10,13 +14,6 @@ module.exports = {
 	module: 'Utility',
 	usage: '<user>',
 	execute(message, args) {
-		const status = {
-			online: 'Online',
-			idle: 'Idle',
-			dnd: 'Do Not Disturb',
-			offline: 'Offline/Invisible',
-		};
-
 		let member = message.mentions.members.first();
 		let memberFlag = false;
 
@@ -48,6 +45,16 @@ module.exports = {
 		const createdSince = timeSince(created);
 		const [{ value: jmonth },, { value: jday },, { value: jyear }] = dateTimeFormat.formatToParts(joined);
 		const [{ value: cmonth },, { value: cday },, { value: cyear }] = dateTimeFormat.formatToParts(created);
+
+		const status = member.presence.status;
+
+		const emoji = Client.emojis.cache;
+		let statusEmoji;
+
+		if (status === 'online') statusEmoji = emoji.get('940019133767094312');
+		if (status === 'offline') statusEmoji = emoji.get('940019140213751809');
+		if (status === 'idle') statusEmoji = emoji.get('940019134534651914');
+		if (status === 'dnd') statusEmoji = emoji.get('940019133767090176');
 
 		const roles = member.roles.cache
 			.filter(r => r.name !== '@everyone')
@@ -93,10 +100,11 @@ module.exports = {
 		}
 
 		const infoEmbed = new MessageEmbed()
-			.setAuthor(`${target.tag} (${target.id})`, target.displayAvatarURL({ dynamic : true }))
+			.setTitle(`${statusEmoji} ${target.tag} (${target.id})`)
+			.setThumbnail(target.displayAvatarURL({ dynamic : true }))
 			.setColor('BLUE')
 			.setDescription(`**Nickname:** ${name} 
-**Status:** ${status[member.presence.status]}
+**Status:** ${status}
 **Custom Status:** ${customStatus}
 **Playing:** ${game} ${gameState}
 			

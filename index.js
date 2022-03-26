@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2021 Brody Jagoe
+	Copyright (C) 2022 Brody Jagoe
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,16 +16,17 @@
 	Contact: admin@accela.xyz
 */
 
+// Special thanks to all those helped me with Accela such as Stedoss, uyitroa and Phil.
+
 const fs = require('fs');
-const axios = require('axios');
 const osu = require('node-osu');
 const qrate = require('qrate');
 
 const { Intents, Collection, Client, MessageEmbed, Permissions } = require('discord.js');
 
 const Sentry = require('./log');
-const { token, owners, osu_key, AuthToken_BFD, AuthToken_botgg, AuthToken_DBL } = require('./config.json');
-const { Users, Muted, sConfig } = require('./dbObjects');
+const { token, owners, osu_key } = require('./config.json');
+const { Users, sConfig } = require('./dbObjects');
 
 const configs = new Collection();
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES], partials: ['CHANNEL'] });
@@ -74,24 +75,6 @@ modules.forEach(c => {
 	});
 });
 
-// ACTIVITY LIST
-
-const activities_list = [
-	'osu!',
-	'Let\'s All Love Lain',
-	'PHANTOMa',
-	'The Wired',
-	'at Phil\'s house',
-	'osu! lazer',
-	'at Cyberia',
-	'h-help im trapped here',
-	'l-let me out of this bot',
-	'now run on human souls',
-	'nekopara vol. 1',
-	'finding nekopara dlc',
-	'creating bot farms',
-];
-
 // BOT START
 
 client.once('ready', async () => {
@@ -102,6 +85,7 @@ client.once('ready', async () => {
 		.filter(user => user.verified_id !== null)
 		.filter(user => client.users.cache.has(user.user_id));
 
+	// Verified User Update
 	// Both name and rank are coming out null in output. Need to fix.
 	const worker = async (u) => {
 		const osuGame = client.guilds.cache.get('98226572468690944');
@@ -193,177 +177,60 @@ client.once('ready', async () => {
 	const serverConfigs = await sConfig.findAll();
 	serverConfigs.forEach(s => configs.set(s.guild_id, s));
 
+	const activities_list = [
+		'osu!',
+		'Let\'s All Love Lain',
+		'PHANTOMa',
+		'The Wired',
+		'at Phil\'s house',
+		'osu! lazer',
+		'at Cyberia',
+		'h-help im trapped here',
+		'l-let me out of this bot',
+		'now run on human souls',
+		'nekopara vol. 1',
+		'finding nekopara dlc',
+		'creating bot farms',
+		'in secret now',
+		'Human Soul Farming Sim 2022',
+		'Now 100% Human Soul Free',
+		'in the osu! server',
+		'>>help for help',
+	];
+
 	// Rotate through activities
 	setInterval(() => {
 		const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
 		client.user.setActivity(activities_list[index]);
 	}, 60 * 1000);
-
-	// Default member count
-	let userCount = 0;
-
-	// Add the amount of users the bot is watching into userCount
-	client.guilds.cache
-		.each(guild => userCount += guild.memberCount);
-
-	// Set bot list api headers
-	const headers_DBL = {
-		'Content-Type': 'application/json',
-		'Authorization': AuthToken_DBL,
-	};
-
-	const headers_botgg = {
-		'Content-Type': 'application/json',
-		'Authorization': AuthToken_botgg,
-	};
-
-	const headers_BFD = {
-		'Content-Type': 'application/json',
-		'Authorization': AuthToken_BFD,
-	};
-
-	// START BOT LIST API POSTING
-	// I want to make this a bit smaller in size
-
-	// discordbotlist.com
-	axios.post(
-		`https://discordbotlist.com/api/v1/bots/${client.user.id}/stats`,
-		{
-			'users': userCount,
-			'guilds': client.guilds.cache.size,
-		},
-		{
-			headers: headers_DBL,
-		},
-	)
-		.then((err, res) => {
-			if (err) {
-				Sentry.captureException(err);
-				console.error(err);
-				return;
-			}
-			console.log(`DiscordBotList.com: ${res.status}`);
-		})
-		.catch(function(error) {
-			Sentry.captureException(error);
-			if (error.response) {
-				console.log(`DiscordBotList.com: ${error.response.status}`);
-			} else if (error.request) {
-				console.log(error.request);
-			} else {
-				console.log('Error', error.message);
-			}
-		});
-
-	// discord.bots.gg
-	axios.post(
-		`https://discord.bots.gg/api/v1/bots/${client.user.id}/stats`,
-		{
-			'guildCount': client.guilds.cache.size,
-		},
-		{
-			headers: headers_botgg,
-		},
-	)
-		.then((err, res) => {
-			if (err) {
-				Sentry.captureException(err);
-				console.error(err);
-				return;
-			}
-			console.log(`discord.bots.gg: ${res.status}`);
-		})
-		.catch(function(error) {
-			Sentry.captureException(error);
-			if (error.response) {
-				console.log(`discord.bots.gg: ${error.response.status}`);
-			} else if (error.request) {
-				console.log(error.request);
-			} else {
-				console.log('Error', error.message);
-			}
-		});
-
-	// botsfordiscord.com
-	axios.post(
-		`https://botsfordiscord.com/api/bot/${client.user.id}`,
-		{
-			'server_count': client.guilds.cache.size,
-		},
-		{
-			headers: headers_BFD,
-		},
-	)
-		.then((err, res) => {
-			if (err) {
-				Sentry.captureException(err);
-				console.error(err);
-				return;
-			}
-			console.log(`botsfordiscord.com: ${res.status}`);
-		})
-		.catch(function(error) {
-			Sentry.captureException(error);
-			if (error.response) {
-				console.log(`botsfordiscord.com: ${error.response.status}`);
-			} else if (error.request) {
-				console.log(error.request);
-			} else {
-				console.log('Error', error.message);
-			}
-		});
-
-	console.log(`${client.user.tag} has entered The Wired`);
 });
-
 // MESSAGE START
 
 client.on('messageCreate', async message => {
-	// Stop if message is a webhook
-	if (message.webhookID) return;
+	// if (!servers.includes(message.guildId)) return;
 
-	// Look for osu beatmap links in embed for compare
-	if (message.embeds[0]) {
-		if (!message.embeds[0].url) {
-			return;
-		} else if (message.embeds[0].url.includes('https://osu.ppy.sh/b/')) {
-			const mapId = message.embeds[0].url;
-			exports.mapID = mapId;
-		}
-	}
+	if (message.webhookID) return;
 
 	let serverConfig;
 
-	// If message isn't in a DM find the server config
 	if (message.channel.type !== 'DM') {
 		serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
 	}
 
 	let prefix = '>>';
-	let modFlag;
 
-	// Get values from the server config
 	if (serverConfig) {
 		prefix = serverConfig.get('prefix');
-		modFlag = serverConfig.get('mod_commands');
 	}
 
-	// Stop if user is a bot
 	if (message.author.bot) return;
 
-	// Split content to find mentions
 	const mentionTest = message.content.split(' ');
 
-	// Find mentions in content
 	if (mentionTest[0] === `<@!${client.user.id}>` && !mentionTest[1]) {
-		message.channel.send('Hello, my current prefix is: ' + '`' + prefix + '` ' + 'if you need help use' + ' `' + prefix + 'help` for more information.');
-		// Test to see if a server is running without a config made
-		if (!serverConfig) {
-			console.log('Running on a server with no config');
-		}
+		message.channel.send(`Hello, my current prefix is: \`${prefix}\` if you need help use \`${prefix}help\` for more information.`);
 	}
 
-	// Stop if the command doesn't have a prefix (default prefix: >>)
 	if (!message.content.startsWith(prefix)) return;
 
 	// For beta testing
@@ -373,10 +240,7 @@ client.on('messageCreate', async message => {
 	}
 	*/
 
-
-	// Split the content to find command arguments
 	const args = message.content.slice(prefix.length).split(/ +/);
-	// First argument is the command name
 	const commandName = args.shift().toLowerCase();
 
 	// Stop if no command
@@ -390,20 +254,7 @@ client.on('messageCreate', async message => {
 	if (!command) return;
 
 	// Private Test
-	// if (message.author.id !== '186493565445079040') return;
-
-	// If command is a mod cmd check if mod cmds are allowed
-	if (command.modCmd) {
-		if (!modFlag) return;
-	}
-
-	if (command.osuDiscord) {
-		if (message.guild.id !== '98226572468690944') return;
-	}
-
-	if (command.disableOsu) {
-		if (message.channelId === '98226572468690944' || message.channelId === '896868398544347166') return;
-	}
+	if (message.author.id !== '186493565445079040') return;
 
 	// If command is owner only check if user is owner
 	if (command.owner) {
@@ -480,35 +331,6 @@ Please contact @Klarp#0001 if you see this message`);
 	}
 });
 
-// MESSAGE DELETE START
-
-client.on('messageDelete', async message => {
-	if (message.channel.type === 'DM') return;
-	// Find server config
-	const serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
-	// Start log flag on false
-	let logFlag = false;
-	// Get message logging value from database
-	if (serverConfig.get('msg_logging')) {
-		// Set log flag to server config value
-		logFlag = serverConfig.get('msg_logging');
-	}
-	// Get log channel from server config
-	const logChannel = serverConfig.get('msgLog_channel');
-
-	// If log flag is true log the message delete
-	if (logFlag) {
-		const delEmbed = new MessageEmbed()
-			.setAuthor(`${message.author.tag} (${message.author.id})`, message.author.displayAvatarURL({ dynamic : true }))
-			.setColor('RED')
-			.setTitle('Message Deleted')
-			.setDescription(message)
-			.setTimestamp();
-
-		client.channels.cache.get(logChannel).send({ embeds: [delEmbed] });
-	}
-});
-
 // NEW GUILD START
 
 client.on('guildCreate', async (guild) => {
@@ -517,12 +339,6 @@ client.on('guildCreate', async (guild) => {
 		await sConfig.create({
 			guild_id: guild.id,
 			prefix: '>>',
-			mod_channel: '',
-			msgLog_channel: '',
-			mod_commands: false,
-			mod_logging: false,
-			msg_logging: false,
-			noPrefix_commands: false,
 		});
 		console.log(`Default config made for ${guild.name}`);
 	} catch(e) {
@@ -544,13 +360,6 @@ client.on('guildBanAdd', async (ban) => {
 	const user = ban.user;
 	const member = guild.members.cache.get(user.id);
 
-	// Find server config
-	const serverConfig = await sConfig.findOne({ where: { guild_id: guild.id } });
-	// Get mod logging value from config
-	const logFlag = serverConfig.get('mod_logging');
-	// Get mod channel from config
-	const modChannel = serverConfig.get('mod_channel');
-
 	await util.sleep(1200);
 
 	if (!guild.me.permissions.has(Permissions.FLAGS.VIEW_AUDIT_LOG)) return;
@@ -563,7 +372,7 @@ client.on('guildBanAdd', async (ban) => {
 	const banLog = fetchedLogs.entries.first();
 
 	// If mod logging is true log the ban
-	if (logFlag || guild.id === '98226572468690944') {
+	if (guild.id === '98226572468690944') {
 		if (!banLog) {
 			const banEmbed = new MessageEmbed()
 				.setThumbnail(user.displayAvatarURL({ dynamic : true }))
@@ -575,8 +384,6 @@ client.on('guildBanAdd', async (ban) => {
 				.setTimestamp();
 
 			if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [banEmbed] });
-
-			guild.channels.cache.get(modChannel).send({ embeds: [banEmbed] });
 		} else {
 			const { executor, target, reason } = banLog;
 
@@ -596,8 +403,6 @@ client.on('guildBanAdd', async (ban) => {
 					.setTimestamp();
 
 				if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [banEmbed] });
-
-				guild.channels.cache.get(modChannel).send({ embeds: [banEmbed] });
 			} else if(target.id === user.id && !reason) {
 				const banEmbed = new MessageEmbed()
 					.setThumbnail(user.displayAvatarURL({ dynamic : true }))
@@ -613,8 +418,6 @@ client.on('guildBanAdd', async (ban) => {
 					.setTimestamp();
 
 				if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [banEmbed] });
-
-				guild.channels.cache.get(modChannel).send({ embeds: [banEmbed] });
 			} else {
 				const banEmbed = new MessageEmbed()
 					.setThumbnail(user.displayAvatarURL({ dynamic : true }))
@@ -627,8 +430,6 @@ client.on('guildBanAdd', async (ban) => {
 					.setTimestamp();
 
 				if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [banEmbed] });
-
-				guild.channels.cache.get(modChannel).send({ embeds: [banEmbed] });
 			}
 		}
 	}
@@ -643,13 +444,6 @@ client.on('guildBanRemove', async (ban) => {
 	const guild = ban.guild;
 	const user = ban.user;
 
-	// Find server config
-	const serverConfig = await sConfig.findOne({ where: { guild_id: guild.id } });
-	// Get mod logging value from config
-	const logFlag = serverConfig.get('mod_logging');
-	// Get mod channel from config
-	const modChannel = serverConfig.get('mod_channel');
-
 	await util.sleep(1200);
 
 	if (!guild.me.permissions.has(Permissions.FLAGS.VIEW_AUDIT_LOG)) return;
@@ -662,7 +456,7 @@ client.on('guildBanRemove', async (ban) => {
 	const unBanLog = fetchedLogs.entries.first();
 
 	// If mod logging is true log the unban
-	if (logFlag || guild.id === '98226572468690944') {
+	if (guild.id === '98226572468690944') {
 		if (!unBanLog) {
 			const unbanEmbed = new MessageEmbed()
 				.setThumbnail(user.displayAvatarURL({ dynamic : true }))
@@ -673,8 +467,6 @@ client.on('guildBanRemove', async (ban) => {
 				.setTimestamp();
 
 			if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [unbanEmbed] });
-
-			guild.channels.cache.get(modChannel).send({ embeds: [unbanEmbed] });
 		} else {
 			const { executor, target } = unBanLog;
 
@@ -691,8 +483,6 @@ client.on('guildBanRemove', async (ban) => {
 					.setTimestamp();
 
 				if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [unbanEmbed] });
-
-				guild.channels.cache.get(modChannel).send({ embeds: [unbanEmbed] });
 			} else {
 				const unbanEmbed = new MessageEmbed()
 					.setThumbnail(user.displayAvatarURL({ dynamic : true }))
@@ -703,128 +493,14 @@ client.on('guildBanRemove', async (ban) => {
 					.setTimestamp();
 
 				if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [unbanEmbed] });
-
-				guild.channels.cache.get(modChannel).send({ embeds: [unbanEmbed] });
 			}
 		}
 	}
-	// Look for the user in the muted database
-	const muteUser = await Muted.findOne({ where: { user_id: user.id } });
-	// Do nothing if no user is found
-	if (!muteUser) return;
-
-	/*
-	If a user is found remove them from the muted database
-	This is to prevent people from being rebanned if they got banned for rejoining while muted
-	This is no longer an issue though as it no longers bans for rejoining but simply remutes them
-	*/
-
-	try {
-		const unMuted = await Muted.destroy({ where: { user_id: user.id } });
-		// If unable to unmute the user log an error
-		if (!unMuted) return console.log(`Failed to unmute ${user.username}`);
-	}catch(e) {
-		// Console log any other errors
-		Sentry.captureException(e);
-		console.error(e);
-	}
-});
-
-// NEW MEMBER START
-
-client.on('guildMemberAdd', async member => {
-	// Find user in muted database
-	const muteUser = await Muted.findOne({ where: { user_id: member.id } });
-	// Do nothing if no user is found
-	if (!muteUser) return;
-	// Finds the muted role
-	const muteRole = member.guild.roles.cache.find(r => r.name === 'muted');
-	// Error if no mute role is found
-	if (!muteRole) return console.log(`Error: Could not re-mute user in ${member.guild.name}`);
-	// Remutes the user
-	member.roles.add(muteRole.id).then(() => {
-		member.send(`You have been muted in ${member.guild.name}! Reason: Mute Evasion`);
-	});
-	util.modAction(client.user, member, 'Mute', 'Mute Evasion', undefined);
 });
 
 process.on('unhandledRejection', error => {
 	console.error('Unhandled promise rejection:', error);
 	Sentry.captureException(error);
-});
-
-// MEMBER LEAVE START
-
-client.on('guildMemberRemove', async (member) => {
-	// Find server config
-	const serverConfig = await sConfig.findOne({ where: { guild_id: member.guild.id } });
-	// Get mod logging value from config
-	const logFlag = serverConfig.get('mod_logging');
-	// Get mod channel from config
-	const modChannel = serverConfig.get('mod_channel');
-
-	if (!serverConfig) return;
-
-	const user = member.user;
-
-	if (!member.guild.me.permissions.has(Permissions.FLAGS.VIEW_AUDIT_LOG)) return;
-
-	const firstFetch = await member.guild.fetchAuditLogs({
-		limit: 1,
-	});
-
-	const firstLog = firstFetch.entries.first();
-
-
-	if (firstLog.action === 'MEMBER_BAN_ADD' && firstLog.target.id === member.id) return;
-
-	await util.sleep(1200);
-
-	const fetchedLogs = await member.guild.fetchAuditLogs({
-		limit: 1,
-		type: 'MEMBER_KICK',
-	});
-
-	const kickLog = fetchedLogs.entries.first();
-
-
-	if (logFlag || member.guild.id === '98226572468690944') {
-		if (kickLog) {
-			const { executor, target, reason } = kickLog;
-
-
-			if (target.id === member.id) {
-				const kickEmbed = new MessageEmbed()
-					.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-					.setColor('#F5E44D')
-					.setTitle(`Kicked ${user.tag}`)
-					.setDescription(`:athletic_shoe: ${user}
-
-**Moderator**: ${executor}
-**Reason:** ${reason}`)
-					.setFooter(`ID: ${user.id}`)
-					.setTimestamp();
-
-				if (member.guild.id === '98226572468690944') return member.guild.channels.cache.get('158484765136125952').send({ embeds: [kickEmbed] });
-
-				member.guild.channels.cache.get(modChannel).send({ embeds: [kickEmbed] });
-			} else if (!reason) {
-				const kickEmbed = new MessageEmbed()
-					.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-					.setColor('#F5E44D')
-					.setTitle(`Kicked ${user.tag}`)
-					.setDescription(`:athletic_shoe: ${user}
-
-**Moderator**: ${executor}`)
-					.setFooter(`ID: ${user.id}`)
-					.setTimestamp();
-
-				if (member.guild.id === '98226572468690944') return member.guild.channels.cache.get('158484765136125952').send({ embeds: [kickEmbed] });
-
-				member.guild.channels.cache.get(modChannel).send({ embeds: [kickEmbed] });
-			}
-		}
-	}
 });
 
 client.login(token);

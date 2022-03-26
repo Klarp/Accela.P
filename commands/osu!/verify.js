@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
 
 const axios = require('axios');
 const osu = require('node-osu');
@@ -95,6 +95,8 @@ Rank (osu!std): ${userStat.global_rank}`)
 							let taiko_rank;
 							let ctb_rank;
 							let mania_rank;
+
+							console.log(`Verifying ${user.username}`);
 
 							console.log(`Standard: ${std_rank}`);
 

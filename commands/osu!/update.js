@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
 const qrate = require('qrate');
 const osu = require('node-osu');
 
@@ -43,7 +43,6 @@ module.exports = {
 
 			if (!user) return message.reply(`User is not verified! Use \`${prefix}verify\` to verify!`);
 			if (user.verified_id && Client.users.cache.has(user.user_id)) {
-				console.log(user);
 				const osuID = user.get('verified_id');
 				const userID = user.get('user_id');
 				const mode = user.get('osu_mode');

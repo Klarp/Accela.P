@@ -9,30 +9,6 @@ module.exports = (serverConfig, DataTypes) => {
 			type: DataTypes.STRING,
 			unique: false,
 		},
-		mod_channel: {
-			type: DataTypes.STRING,
-			unique: false,
-		},
-		msgLog_channel: {
-			type: DataTypes.STRING,
-			unique: false,
-		},
-		mod_commands: {
-			type: DataTypes.BOOLEAN,
-			unique: false,
-		},
-		mod_logging: {
-			type: DataTypes.BOOLEAN,
-			unique: false,
-		},
-		msg_logging: {
-			type: DataTypes.BOOLEAN,
-			unique: false,
-		},
-		noprefix_commands: {
-			type: DataTypes.BOOLEAN,
-			unique: false,
-		},
 	},	{
 		timestamps: false,
 	});

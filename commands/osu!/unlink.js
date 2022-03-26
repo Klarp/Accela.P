@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
 
 const Sentry = require('../../log');
 const { Users } = require('../../dbObjects');

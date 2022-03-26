@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
 
 const { MessageEmbed } = require('discord.js');
 
@@ -6,6 +6,7 @@ const Sentry = require('../../log');
 const { prefix } = require('../../config.json');
 const { checkPerm } = require('../../utils');
 const { owners } = require('../../config.json');
+const { sConfig } = require('../../dbObjects');
 
 function ucFirst(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
@@ -21,17 +22,26 @@ module.exports = {
 	async execute(message, args) {
 		const data = [];
 		const { commands } = message.client;
-		const modules = ['admin', 'osu!', 'fun', 'utility', 'owner'];
+		const modules = ['osu!', 'fun', 'utility', 'owner'];
+		let serverConfig;
+		let sprefix = prefix;
+
+		if (message.channel.type !== 'DM') {
+			serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
+		}
+
+		if (serverConfig) {
+			sprefix = serverConfig.get('prefix');
+		}
 
 		if (!args.length) {
 			const helpEmbed = new MessageEmbed()
 				.setAuthor(message.client.user.tag, message.client.user.displayAvatarURL())
 				.setTitle('Command Directory')
-				.addField('Admin', `\`${prefix}help admin\``, true)
-				.addField('osu!', `\`${prefix}help osu!\``, true)
-				.addField('Fun', `\`${prefix}help fun\``, true)
-				.addField('Utility', `\`${prefix}help utility\``, true)
-				.setFooter(`You can use ${prefix}help [command name] to get info on a specific command!`);
+				.addField('osu!', `\`${sprefix}help osu!\``, true)
+				.addField('Fun', `\`${sprefix}help fun\``, true)
+				.addField('Utility', `\`${sprefix}help utility\``, true)
+				.setFooter(`You can use ${sprefix}help [command name] to get info on a specific command!`);
 
 			return message.channel.send({ embeds: [helpEmbed] });
 		}
@@ -74,15 +84,13 @@ module.exports = {
 					}
 				});
 				data.push('');
-				data.push(`You can send \`${prefix}help [command name]\` to get info on a specific command!`);
+				data.push(`You can send \`${sprefix}help [command name]\` to get info on a specific command!`);
 
 				const text = data.join('\n');
 
 				const helpEmbed = new MessageEmbed()
 					.setColor('BLUE')
 					.setDescription(text);
-
-				console.log(helpEmbed.description);
 
 				return message.author.send({ embeds: [helpEmbed] })
 					.then(() => {
@@ -125,7 +133,7 @@ module.exports = {
 
 **Category:** ${module}
 
-**Usage:** ${prefix}${command.name} ${usage}
+**Usage:** ${sprefix}${command.name} ${usage}
 
 **Cooldown:** ${command.cooldown || 3} second(s)`);
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
 
 module.exports = {
 	name: 'avatar',
@@ -7,19 +7,38 @@ module.exports = {
 	module: 'Utility',
 	usage: '<user>',
 	execute(message, args) {
-		let menUser = message.mentions.users.first();
-		let memberFlag = false;
-		if (!menUser && args[0]) {
-			memberFlag = true;
-			if (!message.guild.members.cache.get(args[0])) return message.reply('Could not find that user!');
-			menUser = message.guild.members.cache.get(args[0]).user;
-		}
-		if (!menUser && memberFlag) menUser = message.user;
+		if (args[0] === '-s') {
+			let menMember = message.mentions.members.first();
+			let memberFlag = false;
 
-		if(menUser) {
-			message.channel.send(menUser.displayAvatarURL({ size:4096, dynamic:true }));
+			if (!menMember && args[1]) {
+				memberFlag = true;
+				if (!message.guild.members.cache.get(args[1])) return message.reply('Could not find that user!');
+				menMember = message.guild.members.cache.get(args[1]);
+			}
+
+			if (!menMember && memberFlag) menMember = message.member;
+
+			if (menMember) {
+				message.channel.send(menMember.displayAvatarURL({ size:256, dynamic:true }));
+			} else {
+				message.channel.send(message.member.displayAvatarURL({ size:256, dynamic:true }));
+			}
 		} else {
-			message.channel.send(message.author.displayAvatarURL({ size:4096, dynamic:true }));
+			let menUser = message.mentions.users.first();
+			let userFlag = false;
+			if (!menUser && args[0]) {
+				userFlag = true;
+				if (!message.guild.members.cache.get(args[0])) return message.reply('Could not find that user!');
+				menUser = message.guild.members.cache.get(args[0]).user;
+			}
+			if (!menUser && userFlag) menUser = message.user;
+
+			if(menUser) {
+				message.channel.send(menUser.displayAvatarURL({ size:256, dynamic:true }));
+			} else {
+				message.channel.send(message.author.displayAvatarURL({ size:256, dynamic:true }));
+			}
 		}
 	},
 };

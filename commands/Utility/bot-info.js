@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Brody Jagoe
+// Copyright (C) 2022 Brody Jagoe
 
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 
@@ -50,14 +50,6 @@ module.exports = {
 
 		const binfoButtons = new MessageActionRow()
 			.addComponents(
-				new MessageButton()
-					.setURL('https://discordapp.com/oauth2/authorize?client_id=687856844848234502&scope=bot&permissions=805383190')
-					.setLabel('Invite')
-					.setStyle('LINK'),
-				new MessageButton()
-					.setURL('https://top.gg/bot/687856844848234502')
-					.setLabel('Vote')
-					.setStyle('LINK'),
 				new MessageButton()
 					.setURL('https://discord.gg/jgzXHkU')
 					.setLabel('Support')
