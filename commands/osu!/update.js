@@ -139,7 +139,8 @@ osu!mania: ${mania_rank}`);
 				let taiko_rank = null;
 				let ctb_rank = null;
 				let mania_rank = null;
-
+				
+				console.log('oinky');
 				// std
 				await osuApi.getUser({ u: osuID, m: 0 }).then(osuUser => {
 					std_rank = osuUser.pp.rank;
