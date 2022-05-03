@@ -16,7 +16,7 @@
 	Contact: admin@accela.xyz
 */
 
-// Special thanks to all those helped me with Accela such as Stedoss, uyitroa and Phil.
+// Special thanks to all those helped me with Accela such as Stedoss, uyitroa, ek and Phil.
 
 const fs = require('fs');
 const osu = require('node-osu');
@@ -161,12 +161,12 @@ client.once('ready', async () => {
 	};
 
 	setInterval(async () => {
-		const osuGame = client.guilds.cache.get('98226572468690944');
-		const logChannel = osuGame.channels.cache.get('776522946872344586');
+		// const osuGame = client.guilds.cache.get('98226572468690944');
+		// const logChannel = osuGame.channels.cache.get('776522946872344586');
 		const osuUsers = await Users.findAll();
 		startDate = Date.now();
 
-		logChannel.send(`**Started processing of ${osuUsers.length} members**`);
+		// logChannel.send(`**Started processing of ${osuUsers.length} members**`);
 
 		for (let i = 0; i < osuUsers.length; i++) {
 			q.push(osuUsers[i]);
@@ -196,6 +196,7 @@ client.once('ready', async () => {
 		'Now 100% Human Soul Free',
 		'in the osu! server',
 		'>>help for help',
+		'Blue Zenith 727 wysi',
 	];
 
 	// Rotate through activities
