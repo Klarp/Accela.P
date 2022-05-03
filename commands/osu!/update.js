@@ -132,6 +132,8 @@ osu!mania: ${mania_rank}`);
 
 			const worker = async (u) => {
 				logChannel.send(`Updating ${u.osu_name} with osu! ID: ${u.verified_id}`);
+				logChannel.send('test test 123');
+				console.log('oink testers united');
 				const osuID = u.get('verified_id');
 				const userID = u.get('user_id');
 				const mode = u.get('osu_mode');
