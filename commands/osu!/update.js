@@ -130,7 +130,7 @@ osu!mania: ${mania_rank}`);
 
 			logChannel.send(`**Started processing of ${storedUsers.length} members**`);
 
-			const worker = async (u, done) => {
+			const worker = async (u) => {
 				logChannel.send(`Updating ${u.osu_name} with osu! ID: ${u.verified_id}`);
 				const osuID = u.get('verified_id');
 				const userID = u.get('user_id');
@@ -191,12 +191,12 @@ osu!mania: ${mania_rank}`);
 						console.log('oinkers');
 					}
 					console.log('good measure');
-					done();
 				} catch (err) {
 					console.error(err);
 					Sentry.captureException(err);
-					done();
 				}
+
+				return { ok: true };
 			};
 
 			const q = qrate(worker, 1, 0.5);
