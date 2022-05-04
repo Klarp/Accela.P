@@ -197,6 +197,10 @@ client.once('ready', async () => {
 		'in the osu! server',
 		'>>help for help',
 		'Blue Zenith 727 wysi',
+		'Yandere Simulator',
+		'in your walls',
+		'with my souls',
+		'in Klarp\'s computer',
 	];
 
 	// Rotate through activities
