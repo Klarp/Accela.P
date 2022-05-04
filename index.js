@@ -259,7 +259,7 @@ client.on('messageCreate', async message => {
 	if (!command) return;
 
 	// Private Test
-	if (message.author.id !== '186493565445079040') return;
+	// if (message.author.id !== '186493565445079040') return;
 
 	// If command is owner only check if user is owner
 	if (command.owner) {
@@ -330,7 +330,7 @@ client.on('messageCreate', async message => {
 			.setColor('RED')
 			.setDescription(`OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!
 			
-Please contact @Klarp#0001 if you see this message`);
+Please do not contact @Klarp#0001 if you see this message`);
 		// Sends error embed on command failure
 		message.channel.send({ embeds: [errorEmbed] });
 	}
