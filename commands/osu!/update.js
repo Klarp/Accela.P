@@ -139,32 +139,26 @@ osu!mania: ${mania_rank}`);
 				let taiko_rank = null;
 				let ctb_rank = null;
 				let mania_rank = null;
-
-				console.log('oinky');
 				// std
 				await osuApi.getUser({ u: osuID, m: 0 }).then(osuUser => {
 					std_rank = osuUser.pp.rank;
 					if (std_rank === '0') std_rank = null;
 				});
-				console.log('oink');
 				// Taiko
 				await osuApi.getUser({ u: osuID, m: 1 }).then(osuUser => {
 					taiko_rank = osuUser.pp.rank;
 					if (taiko_rank === '0') taiko_rank = null;
 				});
-				console.log('oink2');
 				// ctb
 				await osuApi.getUser({ u: osuID, m: 2 }).then(osuUser => {
 					ctb_rank = osuUser.pp.rank;
 					if (ctb_rank === '0') ctb_rank = null;
 				});
-				console.log('oink3');
 				// Mania
 				await osuApi.getUser({ u: osuID, m: 3 }).then(osuUser => {
 					mania_rank = osuUser.pp.rank;
 					if (mania_rank === '0') mania_rank = null;
 				});
-				console.log('oink4');
 
 				try {
 					const upUser = await Users.update({
@@ -176,7 +170,6 @@ osu!mania: ${mania_rank}`);
 					{
 						where: { user_id: userID },
 					});
-					console.log('oinklast');
 					if (upUser > 0) {
 						let rank;
 						if (mode === 0 && std_rank !== null) rank = std_rank;
@@ -184,19 +177,14 @@ osu!mania: ${mania_rank}`);
 						if (mode === 2 && ctb_rank !== null) rank = ctb_rank;
 						if (mode === 3 && mania_rank !== null) rank = mania_rank;
 						const osuMember = osuGame.members.cache.get(userID);
-						console.log('oink');
 						if (osuMember) {
 							util.getRankRole(osuMember, rank, mode);
 						}
-						console.log('oinkers');
 					}
-					console.log('good measure');
 				} catch (err) {
 					console.error(err);
 					Sentry.captureException(err);
 				}
-
-				return { ok: true };
 			};
 
 			const q = qrate(worker, 1, 0.5);
