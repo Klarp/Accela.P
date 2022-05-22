@@ -143,24 +143,29 @@ osu!mania: ${mania_rank}`);
 				await osuApi.getUser({ u: osuID, m: 0 }).then(osuUser => {
 					std_rank = osuUser.pp.rank;
 					if (std_rank === '0') std_rank = null;
+					console.log(`Updating ${u.osu_name} std rank to ${std_rank}`);
 				});
 				// Taiko
 				await osuApi.getUser({ u: osuID, m: 1 }).then(osuUser => {
 					taiko_rank = osuUser.pp.rank;
 					if (taiko_rank === '0') taiko_rank = null;
+					console.log(`Updating ${u.osu_name} std rank to ${taiko_rank}`);
 				});
 				// ctb
 				await osuApi.getUser({ u: osuID, m: 2 }).then(osuUser => {
 					ctb_rank = osuUser.pp.rank;
 					if (ctb_rank === '0') ctb_rank = null;
+					console.log(`Updating ${u.osu_name} std rank to ${ctb_rank}`);
 				});
 				// Mania
 				await osuApi.getUser({ u: osuID, m: 3 }).then(osuUser => {
 					mania_rank = osuUser.pp.rank;
 					if (mania_rank === '0') mania_rank = null;
+					console.log(`Updating ${u.osu_name} std rank to ${mania_rank}`);
 				});
 
 				try {
+					console.log('Starting rank role update');
 					const upUser = await Users.update({
 						std_rank: std_rank,
 						taiko_rank: taiko_rank,
@@ -171,6 +176,7 @@ osu!mania: ${mania_rank}`);
 						where: { user_id: userID },
 					});
 					if (upUser > 0) {
+						console.log('Adding/updating rank roles');
 						let rank;
 						if (mode === 0 && std_rank !== null) rank = std_rank;
 						if (mode === 1 && taiko_rank !== null) rank = taiko_rank;
@@ -178,6 +184,7 @@ osu!mania: ${mania_rank}`);
 						if (mode === 3 && mania_rank !== null) rank = mania_rank;
 						const osuMember = osuGame.members.cache.get(userID);
 						if (osuMember) {
+							console.log(osuMember);
 							util.getRankRole(osuMember, rank, mode);
 						}
 					}

@@ -276,6 +276,8 @@ client.on('messageCreate', async message => {
 		return message.reply('I can\'t execute that command inside DMs!');
 	}
 
+	if (command.disableOsu && message.channelId === '98226572468690944') return;
+
 	// Error if a command that should get arguments receives none
 	if (command.args && !args.length) {
 		let reply = `You didn't put any arguments, ${message.author}!`;
