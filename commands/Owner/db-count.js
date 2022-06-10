@@ -10,6 +10,6 @@ module.exports = {
 	owner: true,
 	async execute(message) {
 		const storedUsers = await Users.findAll();
-		message.channel.send(`The database has ${storedUsers.length} users`);
+		message.channel.send(`The database has ${storedUsers.length} souls`);
 	},
 };
