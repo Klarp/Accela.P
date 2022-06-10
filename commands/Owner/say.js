@@ -7,7 +7,7 @@ module.exports = {
 	name: 'say',
 	description: 'Say something in the osu server',
 	module: 'Owner',
-	owner: true,
+	perms: ['MANAGE_MESSAGES'],
 	execute(message, args) {
 		if (args[0] === '-g') {
 			if (args[1]) {
