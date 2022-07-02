@@ -366,9 +366,11 @@ client.on('guildBanAdd', async (ban) => {
 	const guild = ban.guild;
 	const user = ban.user;
 	const member = guild.members.cache.get(user.id);
-	let highestRole = 'Unknown';
+	let highestRole;
 
-	if (member.roles.highest) {
+	if (!member.roles.highest) {
+		highestRole = 'Unknown';
+	} else {
 		highestRole = member.roles.highest;
 	}
 
