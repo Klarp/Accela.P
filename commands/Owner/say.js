@@ -7,7 +7,7 @@ module.exports = {
 	name: 'say',
 	description: 'Say something in the osu server',
 	module: 'Owner',
-	perms: ['MANAGE_MESSAGES'],
+	owner: true,
 	execute(message, args) {
 		if (args[0] === '-g') {
 			if (args[1]) {
@@ -47,7 +47,7 @@ module.exports = {
 		if (args[0] === '-b') {
 			if (args[1]) {
 				const argMessage = args.slice(1).join(' ');
-				Client.guilds.cache.get('98226572468690944').channels.cache.get('137555659767021569').send(argMessage);
+				Client.guilds.cache.get('98226572468690944').channels.cache.get('277163440999628800').send(argMessage);
 			}
 		}
 	},

@@ -366,6 +366,11 @@ client.on('guildBanAdd', async (ban) => {
 	const guild = ban.guild;
 	const user = ban.user;
 	const member = guild.members.cache.get(user.id);
+	let highestRole = 'Unknown';
+
+	if (member.roles.highest) {
+		highestRole = member.roles.highest;
+	}
 
 	await util.sleep(1200);
 
@@ -387,7 +392,7 @@ client.on('guildBanAdd', async (ban) => {
 				.setTitle(`Banned ${user.tag}`)
 				.setDescription(`:lock: ${user}
 
-**Highest Role:** ${member.roles.highest}`)
+**Highest Role:** ${highestRole}`)
 				.setTimestamp();
 
 			if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [banEmbed] });
@@ -402,7 +407,7 @@ client.on('guildBanAdd', async (ban) => {
 					.setTitle(`Banned ${user.tag}`)
 					.setDescription(`:lock: ${user}
 					
-**Highest Role:** ${member.roles.highest}
+**Highest Role:** ${highestRole}
 
 **Moderator:** ${executor}
 **Reason:** ${reason}`)
@@ -417,7 +422,7 @@ client.on('guildBanAdd', async (ban) => {
 					.setTitle(`Banned ${user.tag}`)
 					.setDescription(`:lock: ${user}
 
-**Highest Role:** ${member.roles.highest}
+**Highest Role:** ${highestRole}
 
 **Moderator:** ${executor}
 **Reason:** No Reason Given`)
@@ -432,7 +437,7 @@ client.on('guildBanAdd', async (ban) => {
 					.setTitle(`Banned ${user.tag}`)
 					.setDescription(`:lock: ${user}
 
-**Highest Role:** ${member.roles.highest}`)
+**Highest Role:** ${highestRole}`)
 					.setFooter(`ID: ${user.id}`)
 					.setTimestamp();
 
