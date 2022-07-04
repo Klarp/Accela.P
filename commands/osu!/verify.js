@@ -45,6 +45,7 @@ module.exports = {
 			// Pending Member Check
 
 			const member = message.member;
+			console.log(member);
 
 			if (member.pending) return message.channel.send('**Error:** You are still a pending member in the server!');
 
