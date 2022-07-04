@@ -1,6 +1,7 @@
 // Copyright (C) 2022 Brody Jagoe
 
 const Sentry = require('../../log');
+const { Client } = require('../../index');
 const { Users } = require('../../dbObjects');
 
 
@@ -10,14 +11,20 @@ module.exports = {
 	module: 'Osu!',
 	async execute(message) {
 		try {
+
 			const unLink = await Users.destroy({ where: { user_id: message.author.id } });
 			if (!unLink) return message.reply('No link found!');
 
-			roleList.forEach(r => {
-				if (message.member.roles.cache.get(r)) {
-					message.member.roles.remove(r);
-				}
-			});
+			const osuGame = Client.guilds.cache.get('98226572468690944');
+			const member = osuGame.members.cache.get(message.author.id);
+
+			if (member) {
+				roleList.forEach(r => {
+					if (member.roles.cache.get(r)) {
+						member.member.roles.remove(r);
+					}
+				});
+			}
 
 			return message.reply('Successfully unlinked!');
 		}catch(e) {
