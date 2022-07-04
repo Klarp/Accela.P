@@ -42,6 +42,12 @@ module.exports = {
 			// START VERIFICATION
 			const code = args[0];
 
+			// Pending Member Check
+
+			const member = message.member;
+
+			if (member.pending) return message.channel.send('**Error:** You are still a pending member in the server!');
+
 			// const osuApi = new osu.Api(osu_key);
 
 			axios.post(
