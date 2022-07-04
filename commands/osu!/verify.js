@@ -43,11 +43,11 @@ module.exports = {
 			const code = args[0];
 
 			// Pending Member Check
+			const osuGame = Client.guilds.cache.get('98226572468690944');
 
-			const member = message.member;
-			console.log(member);
+			const member = osuGame.members.cache.get(message.author.id);
 
-			if (member.pending) return message.channel.send('**Error:** You are still a pending member in the server!');
+			if (member.pending) return ('**ERROR:** You are still pending in the server!');
 
 			// const osuApi = new osu.Api(osu_key);
 
@@ -87,7 +87,6 @@ module.exports = {
 							const userStat = user.statistics;
 
 							// RANK SYSTEM STARTS
-							const osuGame = Client.guilds.cache.get('98226572468690944');
 							const logChannel = osuGame.channels.cache.get('776522946872344586');
 							const osuMember = osuGame.members.cache.get(message.author.id);
 
