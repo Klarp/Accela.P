@@ -21,7 +21,7 @@ module.exports = {
 			if (member) {
 				roleList.forEach(r => {
 					if (member.roles.cache.get(r)) {
-						member.member.roles.remove(r);
+						member.roles.remove(r);
 					}
 				});
 			}
