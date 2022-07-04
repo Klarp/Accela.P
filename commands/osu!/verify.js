@@ -146,7 +146,7 @@ Rank (osu!std): ${userStat.global_rank}`)
 										if (mode === 2 && ctb_rank !== null) rank = ctb_rank;
 										if (mode === 3 && mania_rank !== null) rank = mania_rank;
 										getRankRole(osuMember, rank, mode);
-										logChannel.send(`:white_check_mark: ${message.author} verified with ${user.username}`);
+										logChannel.send(`:white_check_mark: ${message.author} (ID: ${message.author.id}) verified with ${user.username} (osu! ID: ${user.id})`);
 									}
 								}
 
@@ -178,7 +178,7 @@ Rank (osu!std): ${userStat.global_rank}`)
 													if (mode === 2 && ctb_rank !== null) rank = ctb_rank;
 													if (mode === 3 && mania_rank !== null) rank = mania_rank;
 													getRankRole(osuMember, rank, mode);
-													logChannel.send(`:white_check_mark: ${message.author} verified with ${user.username}`);
+													logChannel.send(`:white_check_mark: ${message.author} (ID: ${message.author.id}) verified with ${user.username} (osu! ID: ${user.id})`);
 												}
 											}
 											return message.channel.send({ embeds: [userEmbed] });
@@ -218,7 +218,7 @@ Rank (osu!std): ${userStat.global_rank}`)
 						.setColor('RED')
 						.setDescription('Please try again with a new code.');
 					message.channel.send({ embeds: [errorEmbed] });
-					logChannel.send(`:x: ${message.author} failed to verify`);
+					logChannel.send(`:x: ${message.author} (ID: ${message.author.id}) failed to verify`);
 					Sentry.captureException(err);
 					console.log(err.response.status);
 				});
