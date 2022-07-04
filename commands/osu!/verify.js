@@ -47,7 +47,7 @@ module.exports = {
 
 			const member = osuGame.members.cache.get(message.author.id);
 
-			if (member.pending) return ('**ERROR:** You are still pending in the server!');
+			if (member.pending) return message.channel.send('**ERROR:** You are still pending in the server!');
 
 			// const osuApi = new osu.Api(osu_key);
 
@@ -211,7 +211,6 @@ Rank (osu!std): ${userStat.global_rank}`)
 						});
 				})
 				.catch(err => {
-					const osuGame = Client.guilds.cache.get('98226572468690944');
 					const logChannel = osuGame.channels.cache.get('776522946872344586');
 					const errorEmbed = new MessageEmbed()
 						.setTitle(':x: Error: Could Not Verify!')
