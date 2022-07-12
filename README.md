@@ -25,9 +25,6 @@ To use Accela create a config.json inside the file directory with the following 
 	"prefix": ">>",
 	"token": "Your_Token",
 	"owners": ["Owner ID, Co-Owner ID"],
-	"AuthToken_BFD": "Your_Token",
-	"AuthToken_botgg": "Your_Token",
-	"AuthToken_DBL": "Your_Token",
 
 	"osu_key": "Your_Key",
 	"osu_key_v2": "Your_Key"
