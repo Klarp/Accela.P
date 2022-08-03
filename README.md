@@ -1,5 +1,3 @@
-[![Discord Bots](https://top.gg/api/widget/status/687856844848234502.svg)](https://top.gg/bot/687856844848234502)
-
 # Accela
 
 Accela is your osu! bot
