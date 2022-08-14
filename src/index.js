@@ -83,7 +83,7 @@ modules.forEach(c => {
 });
 
 process.on('unhandledRejection', error => {
-	console.error('Unhandled promise rejection:', error);
+	console.error(`Unhandled promise rejection: ${error.rawError.code} ${error.rawError.message}`);
 	Sentry.captureException(error);
 });
 
