@@ -71,7 +71,7 @@ module.exports = {
 
 **Moderator:** ${executor}
 **Reason:** No Reason Given`)
-						.setFooter(`ID: ${user.id}`)
+						.setFooter({ text: `ID: ${user.id}` })
 						.setTimestamp();
 
 					if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [banEmbed] });
@@ -83,7 +83,7 @@ module.exports = {
 						.setDescription(`:lock: ${user}
 
 **Highest Role:** ${highestRole}`)
-						.setFooter(`ID: ${user.id}`)
+						.setFooter({ text: `ID: ${user.id}` })
 						.setTimestamp();
 
 					if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [banEmbed] });
