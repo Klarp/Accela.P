@@ -1,6 +1,6 @@
 // Copyright (C) 2022 Brody Jagoe
 
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { Client } = require('../../index');
 const { sConfig } = require('../../../database/dbObjects');
 const { version } = require('../../../package.json');
@@ -52,11 +52,11 @@ module.exports = {
 				new ButtonBuilder()
 					.setURL('https://discord.gg/jgzXHkU')
 					.setLabel('Support')
-					.setStyle('LINK'),
+					.setStyle(ButtonStyle.Link),
 				new ButtonBuilder()
 					.setURL('https://github.com/Klarp/Accela.P')
 					.setLabel('GitHub')
-					.setStyle('LINK'),
+					.setStyle(ButtonStyle.Link),
 			);
 
 		const infoEmbed = new EmbedBuilder()
