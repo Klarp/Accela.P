@@ -116,6 +116,7 @@ module.exports = {
 				const timeLeft = (expirationTime - now) / 1000;
 				return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`).then(msg => {
 					setTimeout(() => msg.delete(), 5000);
+					setTimeout(() => message.delete(), 5000);
 				});
 			}
 		}
