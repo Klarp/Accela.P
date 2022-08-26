@@ -1,4 +1,4 @@
-const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField, AuditLogEvent } = require('discord.js');
 const { sleep } = require('../utils');
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
 
 		const fetchedLogs = await guild.fetchAuditLogs({
 			limit: 1,
-			type: 'MEMBER_BAN_REMOVE',
+			type: AuditLogEvent.MemberBanRemove,
 		});
 
 		const unBanLog = fetchedLogs.entries.first();
