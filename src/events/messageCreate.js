@@ -40,9 +40,11 @@ module.exports = {
 	*/
 
 		// Channel lock for beta testing
+		/*
 		if (message.channel.guild.id === '98226572468690944') {
 			if (message.channel.id !== '277163440999628800') return;
 		}
+		*/
 
 		const args = message.content.slice(prefix.length).split(/ +/);
 		const commandName = args.shift().toLowerCase();
