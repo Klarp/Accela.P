@@ -4,8 +4,6 @@ Accela is your osu! bot
 
 Accela strives to become a simple and elegant looking osu! bot which only shows the user the most important information.
 
-To invite Accela to your server [Click Here](https://discord.com/oauth2/authorize?client_id=687856844848234502&scope=bot&permissions=805383190)
-
 ## Installation
 
 Use the package manager [node.js](https://nodejs.org/en/) to install Accela.
@@ -23,6 +21,7 @@ To use Accela create a config.json inside the file directory with the following 
 	"prefix": ">>",
 	"token": "Your_Token",
 	"owners": ["Owner ID, Co-Owner ID"],
+	"servers": ["Private Server ID", "Other Server ID"]
 
 	"osu_key": "Your_Key",
 	"osu_key_v2": "Your_Key"

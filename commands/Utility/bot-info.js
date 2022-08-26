@@ -55,7 +55,7 @@ module.exports = {
 					.setLabel('Support')
 					.setStyle('LINK'),
 				new MessageButton()
-					.setURL('https://github.com/Klarp/Accela')
+					.setURL('https://github.com/Klarp/Accela.P')
 					.setLabel('GitHub')
 					.setStyle('LINK'),
 			);

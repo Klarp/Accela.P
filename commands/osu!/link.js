@@ -34,7 +34,7 @@ module.exports = {
 				osu_name: osuName,
 				osu_id: osuID,
 			});
-			return message.channel.send(`Linked ${message.author} to ${args.join(' ')}`);
+			return message.channel.send(`Linked ${message.author} to ${args.join(' ')} (osu! ID: ${osuID})`);
 		} catch(e) {
 			if (e.name === 'SequelizeUniqueConstraintError') {
 				try {
@@ -46,7 +46,7 @@ module.exports = {
 						where: { user_id: message.author.id },
 					});
 					if (upUser > 0) {
-						return message.reply(`Updated link to ${args.join(' ')}`);
+						return message.reply(`Updated link to ${args.join(' ')} (osu! ID: ${osuID})`);
 					}
 				} catch(err) {
 					console.error(err);

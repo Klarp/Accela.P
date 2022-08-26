@@ -3,12 +3,12 @@
 const axios = require('axios');
 const osu = require('node-osu');
 
-const { MessageEmbed, Permissions } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField } = require('discord.js');
 
-const Sentry = require('../../log');
+const Sentry = require('../../../log');
 const { getRankRole } = require('../../utils');
-const { osu_key, osu_key_v2 } = require('../../config.json');
-const { Users } = require('../../dbObjects');
+const { osu_key, osu_key_v2 } = require('../../../config.json');
+const { Users } = require('../../../database/dbObjects');
 const { Client } = require('../../index');
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
 
 		// NO VERIFICATION CODE GIVEN
 		if (!args[0]) {
-			const noVerifyEmbed = new MessageEmbed()
+			const noVerifyEmbed = new EmbedBuilder()
 				.setTitle('Please Verify Your osu! Account!')
 				.setDescription('https://accela.xyz/verify.html')
 				.setColor('#af152a');
@@ -34,8 +34,8 @@ module.exports = {
 		if (args[0]) {
 
 			// DELETES MESSAGE IF USED IN GUILD
-			if (message.channel.type !== 'DM') {
-				if (!message.guild.me.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) return message.channel.send('Please use this command inside my DMs! (codes are private and one time use)');
+			if (message.channel.type !== 1) {
+				if (!message.guild.members.me.permissions.has(PermissionsBitField.Flags.ManageMessages)) return message.channel.send('Please use another code inside my DMs! **The code is private and one time use!**');
 				message.delete();
 				return message.reply('Please use another code inside my DMs');
 			}
@@ -90,12 +90,12 @@ module.exports = {
 							const logChannel = osuGame.channels.cache.get('776522946872344586');
 							const osuMember = osuGame.members.cache.get(message.author.id);
 
-							const userEmbed = new MessageEmbed()
+							const userEmbed = new EmbedBuilder()
 								.setTitle(':white_check_mark: Verfication Accepted!')
 								.setColor('#af152a')
 								.setDescription(`User: ${user.username}
 Rank (osu!std): ${userStat.global_rank}`)
-								.setFooter(`ID: ${user.id} | Use >>mode to change game modes`);
+								.setFooter({ text: `ID: ${user.id} | Use >>mode to change game modes` });
 
 							const std_rank = userStat.global_rank;
 							let taiko_rank;
@@ -212,9 +212,9 @@ Rank (osu!std): ${userStat.global_rank}`)
 				})
 				.catch(err => {
 					const logChannel = osuGame.channels.cache.get('776522946872344586');
-					const errorEmbed = new MessageEmbed()
+					const errorEmbed = new EmbedBuilder()
 						.setTitle(':x: Error: Could Not Verify!')
-						.setColor('RED')
+						.setColor('#ff0000')
 						.setDescription('Please try again with a new code.');
 					message.channel.send({ embeds: [errorEmbed] });
 					logChannel.send(`:x: ${message.author} (ID: ${message.author.id}) failed to verify`);
