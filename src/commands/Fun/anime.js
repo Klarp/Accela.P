@@ -1,6 +1,6 @@
 // Copyright (C) 2022 Brody Jagoe
 
-const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
+const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType } = require('discord.js');
 const { nextPage, prevPage } = require('../../utils');
 
 const anilist_node = require('anilist-node');
@@ -17,8 +17,11 @@ module.exports = {
 	execute(message, args) {
 		const anime = args.join(' ');
 		let page = 0;
+		const animeFilter = {
+			isAdult: false,
+		};
 
-		aniList.search('anime', anime).then(res => {
+		aniList.searchEntry.anime(anime, animeFilter).then(res => {
 			const maxPage = res.media.length;
 			if (res.media[0]) {
 				// Create Buttons
@@ -108,16 +111,16 @@ ${longDesc}`)
 						.setFooter({ text: `Page: ${page + 1}/${maxPage}` });
 
 					message.channel.send({ embeds: [aniEmbed], components: [row] }).then(msg => {
-						// Collect buttons for 5 minutes
-						const collector = msg.createMessageComponentCollector({ componentType: 'BUTTON' });
+						const collector = msg.createMessageComponentCollector({ componentType: ComponentType.Button, time: 60000 });
 
-						collector.on('collect', button => {
-
+						collector.on('collect', async button => {
 							if (button.user.id === message.author.id) {
 								if (button.customId === 'next') {
+									await button.deferUpdate();
 									change = 'next';
 									page = nextPage(page, maxPage);
 								} else {
+									await button.deferUpdate();
 									change = 'prev';
 									page = prevPage(page, maxPage);
 								}
@@ -127,6 +130,7 @@ ${longDesc}`)
 								button.reply({ content: 'Only the message author can switch pages!', ephemeral: true });
 							}
 						});
+
 						function pageSwitch() {
 							aniList.media.anime(res.media[page].id).then(aniResEdit => {
 
@@ -178,7 +182,7 @@ ${longDesc}`)
 								longDesc = truncate(longDesc, 300);
 
 								const aniEmbedEdit = new EmbedBuilder()
-									.setAuthor('AniList [UNOFFICIAL]', 'https://anilist.co/img/icons/android-chrome-512x512.png')
+									.setAuthor({ name: 'AniList [UNOFFICIAL]', iconURL: 'https://anilist.co/img/icons/android-chrome-512x512.png' })
 									.setColor('BLUE')
 									.setTitle(`${aniResEdit.title.romaji} [${aniResEdit.title.native}]`)
 									.setURL(aniResEdit.siteUrl)
@@ -194,7 +198,7 @@ ${longDesc}`)
 								
 			**Description**
 			${longDesc}`)
-									.setFooter(`Page: ${page + 1}/${maxPage}`);
+									.setFooter({ text: `Page: ${page + 1}/${maxPage}` });
 
 								msg.edit({ embeds: [aniEmbedEdit], components: [row] });
 							});
