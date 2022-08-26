@@ -56,7 +56,7 @@ module.exports = {
 
 **Moderator:** ${executor}
 **Reason:** ${reason}`)
-						.setFooter(`ID: ${user.id}`)
+						.setFooter({ text: `ID: ${user.id}` })
 						.setTimestamp();
 
 					if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [banEmbed] });
