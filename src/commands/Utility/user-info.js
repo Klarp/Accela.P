@@ -101,7 +101,7 @@ module.exports = {
 		const infoEmbed = new EmbedBuilder()
 			.setTitle(`${statusEmoji} ${target.tag} (${target.id})`)
 			.setThumbnail(target.displayAvatarURL({ dynamic : true }))
-			.setColor('BLUE')
+			.setColor('#af152a')
 			.setDescription(`**Nickname:** ${name} 
 **Status:** ${status}
 **Custom Status:** ${customStatus}

@@ -4,7 +4,6 @@ const { Collection, EmbedBuilder } = require('discord.js');
 const { Client } = require('../index');
 const { owners } = require('../../config.json');
 const { checkPerm } = require('../utils');
-const { Sentry } = require('../../log');
 
 const cooldowns = new Collection();
 
@@ -33,16 +32,18 @@ module.exports = {
 		if (!message.content.startsWith(prefix)) return;
 
 		// For beta testing
-		/*
-	if (message.channel.type === 'GUILD_TEXT') {
-		if (message.channel.guild.id === '98226572468690944') return;
-	}
-	*/
+		/**
+		if (message.channel.type === 'GUILD_TEXT') {
+			if (message.channel.guild.id === '98226572468690944') return;
+		}
+		*/
 
 		// Channel lock for beta testing
-		/*
-		if (message.channel.guild.id === '98226572468690944') {
-			if (message.channel.id !== '277163440999628800') return;
+		/**
+		if (message.channel.type === 'GUILD_TEXT') {
+			if (message.channel.guild.id === '98226572468690944') {
+				if (message.channel.id !== '277163440999628800') return;
+			}
 		}
 		*/
 
@@ -131,16 +132,18 @@ module.exports = {
 		} catch (error) {
 		// If failed to execute console log the error
 			console.error(error);
-			Sentry.captureException(error);
 			// Creation of error embed
 			const errorEmbed = new EmbedBuilder()
 				.setTitle('An Error Has Occurred')
-				.setColor('RED')
+				.setColor('#EA4D4B')
 				.setDescription(`OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!
 			
-Please do not contact @Klarp#0001 if you see this message`);
+Please do not contact @Klarp#0001 if you see this message
+
+\`\`\`${error}\`\`\``);
 			// Sends error embed on command failure
 			message.channel.send({ embeds: [errorEmbed] });
+			Client.guilds.cache.get('780131105256898570').channels.cache.get('1008460453850132570').send(`<@186493565445079040> Error: ${error}`);
 		}
 	},
 };

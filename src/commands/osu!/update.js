@@ -216,7 +216,6 @@ osu!mania: ${mania_rank}`);
 			}
 
 			const user = await Users.findOne({ where: { user_id: findUser.id } });
-			console.log(user);
 
 			if (!user) return message.reply('User is not verified!');
 			if (user.verified_id && Client.users.cache.has(user.user_id)) {

@@ -18,10 +18,11 @@ module.exports = {
 		}
 		const bot = Client.user;
 		const me = message.guild.members.me;
-		const roles = me.roles.cache
+		let roles = me.roles.cache
 			.filter(r => r.name !== '@everyone')
 			.sort((a, b) => b.position - a.position)
 			.map(r => `${r}`).join(' | ');
+		if (!roles) roles = 'None';
 		let userCount = 0;
 
 		Client.guilds.cache
@@ -61,7 +62,7 @@ module.exports = {
 
 		const infoEmbed = new EmbedBuilder()
 			.setAuthor({ name: bot.username, iconURL: bot.displayAvatarURL() })
-			.setColor('BLUE')
+			.setColor('#af152a')
 			.setDescription(`**Prefix:** ${prefix}
 **Help Command:** ${prefix}help
 **Total Servers:** ${Client.guilds.cache.size} (${userCount} users)

@@ -83,8 +83,9 @@ modules.forEach(c => {
 });
 
 process.on('unhandledRejection', error => {
-	console.error(`Unhandled promise rejection: ${error.rawError.code} ${error.rawError.message}`);
+	console.error(`Unhandled promise rejection: ${error}`);
 	Sentry.captureException(error);
+	client.guilds.cache.get('780131105256898570').channels.cache.get('1008460453850132570').send(`<@186493565445079040> Unhandled promise rejection: ${error}`);
 });
 
 

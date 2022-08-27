@@ -2,8 +2,8 @@
 
 const { EmbedBuilder, Collection } = require('discord.js');
 
-const { timeSince } = require('../../utils');
-const { upDate } = require('../../events/ready');
+// const { timeSince } = require('../../utils');
+// const { upDate } = require('../../events/ready');
 const { Users, sConfig } = require('../../../database/dbObjects');
 
 const userList = new Collection();
@@ -18,7 +18,7 @@ module.exports = {
 	async execute(message, args) {
 		const users = await Users.findAll();
 		const server = message.guild;
-		const newDate = upDate();
+		// const newDate = upDate();
 
 		let mode = 'std';
 		if (args[0]) mode = args[0];
@@ -55,17 +55,18 @@ module.exports = {
 			}
 
 			const listArray = new Array(newList);
-			const posNumber = listArray.findIndex(u => u.user_id === message.author.id) + 1;
+			const posNumber = listArray.findIndex(u => u.user_id === message.author.id) + 2;
 			const listUser = newList.get(message.author.id);
 
 			table += getPos(posNumber, listArray, listUser, nameColumnWidth, rankColumnWidth);
 
 			const leaderEmbed = new EmbedBuilder()
-				.addField(`${message.guild.name} Leaderboard (osu!${mode})`, `\`\`\`scala
+				.addFields({ name: `${message.guild.name} Leaderboard (osu!${mode})`, value: `\`\`\`scala
 ${table}
-\`\`\``)
+\`\`\`` })
 				.setColor('#af152a')
-				.setFooter(`Last Updated ${timeSince(newDate)} • ${prefix}lb [mode] for other gamemodes`);
+				// .setFooter({ text: `Last Updated ${timeSince(newDate)} • ${prefix}lb [mode] for other gamemodes` });
+				.setFooter({ text: `${prefix}lb [mode] for other gamemodes (std, taiko, ctb, mania)` });
 
 			message.channel.send({ embeds: [leaderEmbed] });
 		} else {
@@ -96,18 +97,19 @@ ${table}
 				table += getRow(i + 1, leaderList[i], nameColumnWidth, rankColumnWidth) + '\n';
 			}
 
-			const listArray = newList.array();
-			const posNumber = listArray.findIndex(u => u.user_id === message.author.id) + 1;
+			const listArray = new Array(newList);
+			const posNumber = listArray.findIndex(u => u.user_id === message.author.id) + 2;
 			const listUser = listArray.find(u => u.user_id === message.author.id);
 
 			table += getPos(posNumber, listArray, listUser, nameColumnWidth, rankColumnWidth);
 
 			const leaderEmbed = new EmbedBuilder()
-				.addField(`osu! Game Leaderboard (osu!${mode})`, `\`\`\`scala
+				.addFields({ name: `osu! Game Leaderboard (osu!${mode})`, value: `\`\`\`scala
 ${table}
-\`\`\``)
+\`\`\`` })
 				.setColor('#af152a')
-				.setFooter(`Last Updated ${timeSince(newDate)}`);
+				// .setFooter({ text: `Last Updated ${timeSince(newDate)}` });
+				.setFooter({ text: `${prefix}lb [mode] for other gamemodes (std, taiko, ctb, mania)` });
 
 			message.channel.send({ embeds: [leaderEmbed] });
 		}
@@ -200,7 +202,6 @@ ${table}
 			let posHolder = '';
 			if (!user) return posHolder;
 			const rank = user.rank;
-			console.log(pos);
 
 			let positionText = `Your Position: ${pos}/${list.length}`;
 

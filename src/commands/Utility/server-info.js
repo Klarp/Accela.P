@@ -49,7 +49,7 @@ module.exports = {
 		const infoEmbed = new EmbedBuilder()
 			.setAuthor({ name: server.name, iconURL: server.iconURL({ dynamic: true }) })
 			.setThumbnail(server.bannerURL())
-			.setColor('BLUE')
+			.setColor('#af152a')
 			.setDescription(`**Owner:** ${owner.user.tag} (${server.ownerId})
 
 **Members:** ${server.memberCount} | **Vanity URL:** ${vanity}
@@ -64,18 +64,3 @@ module.exports = {
 		message.channel.send({ embeds: [infoEmbed] });
 	},
 };
-
-/*
-Description
-Owner (Owner ID)
-Vanity URL
-Region
-Verification Level
-Channels (Text, Voice)
-Emoji Count
-# of Boosts
-Boost Level
-
-Footer:
-Created At
-*/
