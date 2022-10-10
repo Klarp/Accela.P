@@ -17,7 +17,7 @@ module.exports = {
 	description: 'Verifies your osu! account',
 	module: 'Osu!',
 	usage: '[code]',
-	execute(message, args) {
+	async execute(message, args) {
 		const osuApi = new osu.Api(osu_key);
 
 		// NO VERIFICATION CODE GIVEN
@@ -36,9 +36,12 @@ module.exports = {
 			// DELETES MESSAGE IF USED IN GUILD
 
 			if (message.channel.type !== ChannelType.DM) {
-				if (!message.guild.members.me.permissions.has(PermissionsBitField.Flags.ManageMessages)) return message.channel.send('Please use another code inside my DMs! **The code is private and one time use!**');
-				message.delete();
-				return message.reply('Please use another code inside my DMs');
+				if (message.guild.members.me.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+					message.reply('Please use another code inside my DMs');
+					return message.delete();
+				} else {
+					return message.reply('**Please you the verification code in my DMs as they are private and one time use!**');
+				}
 			}
 			// START VERIFICATION
 			const code = args[0];
