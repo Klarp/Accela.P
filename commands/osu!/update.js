@@ -105,7 +105,7 @@ module.exports = {
 
 					const osuMode = modeNums[user.get('osu_mode')];
 
-					const updateEmbed = new MessageEmbed()
+					const updateEmbed = new EmbedBuilder()
 						.setTitle('Verification Update')
 						.setAuthor(message.author.tag)
 						.setColor('#af152a')
