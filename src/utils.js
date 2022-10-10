@@ -6,9 +6,9 @@ const osu = require('node-osu');
 const { EmbedBuilder, ChannelType } = require('discord.js');
 const { parser, diff, ppv2 } = require('ojsama');
 
-const { Client } = require('./index.js');
-const { osu_key } = require('./config.json');
-const { sConfig } = require('./dbObjects.js');
+const { Client } = require('../src/index');
+const { osu_key } = require('../config.json');
+const { sConfig } = require('../database/dbObjects');
 
 module.exports = {
 	/**
