@@ -1,10 +1,6 @@
 {
   "name": "accela",
-<<<<<<< Updated upstream
-  "version": "0.0.3-alpha",
-=======
   "version": "3.1.0",
->>>>>>> Stashed changes
   "description": "osu! and moderation bot",
   "main": "index.js",
   "scripts": {
@@ -24,7 +20,7 @@
     "axios": "^0.24.0",
     "body-parser": "^1.19.0",
     "curl": "^0.1.4",
-    "discord.js": "^13.3.1",
+    "discord.js": "^14.0.1",
     "express": "^4.17.1",
     "git": "^0.1.5",
     "got": "^11.8.5",

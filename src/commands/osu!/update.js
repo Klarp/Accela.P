@@ -2,19 +2,19 @@
 const qrate = require('qrate');
 const osu = require('node-osu');
 
-const { EmbedBuilder, ChannelType } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
-const Sentry = require('../../log');
+const Sentry = require('../../../log');
 const util = require('../../utils');
-const { osu_key, owners } = require('../../config.json');
-const { Users, sConfig } = require('../../dbObjects');
+const { osu_key, owners } = require('../../../config.json');
+const { Users, sConfig } = require('../../../database/dbObjects');
 const { Client } = require('../../index');
 
 
 module.exports = {
 	name: 'update',
 	description: 'Updates Accela\'s verification',
-	cooldown: 60,
+	cooldown: 30,
 	module: 'Osu!',
 	async execute(message, args) {
 		const option = args[0];
@@ -23,7 +23,7 @@ module.exports = {
 		const startDate = Date.now();
 		let prefix = '>>';
 		let serverConfig;
-		if (message.channel.type !== ChannelType.DM) {
+		if (message.channel.type !== 'DM') {
 			serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
 		}
 
@@ -105,9 +105,9 @@ module.exports = {
 
 					const osuMode = modeNums[user.get('osu_mode')];
 
-					const updateEmbed = new MessageEmbed()
+					const updateEmbed = new EmbedBuilder()
 						.setTitle('Verification Update')
-						.setAuthor(message.author.tag)
+						.setAuthor({ name: message.author.tag })
 						.setColor('#af152a')
 						.setDescription(`Mode: ${osuMode}
 osu!std: ${std_rank}
@@ -207,6 +207,7 @@ osu!mania: ${mania_rank}`);
 				q.push(storedUsers[i]);
 			}
 		} else if (option === 'user') {
+			if (message.author.id !== '186493565445079040') return;
 			let findUser;
 			if (message.mentions.users.first()) {
 				findUser = message.mentions.users.first();
@@ -215,7 +216,6 @@ osu!mania: ${mania_rank}`);
 			}
 
 			const user = await Users.findOne({ where: { user_id: findUser.id } });
-			console.log(user);
 
 			if (!user) return message.reply('User is not verified!');
 			if (user.verified_id && Client.users.cache.has(user.user_id)) {
