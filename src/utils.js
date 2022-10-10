@@ -3,15 +3,23 @@
 const curl = require('curl');
 const osu = require('node-osu');
 
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder, ChannelType } = require('discord.js');
 const { parser, diff, ppv2 } = require('ojsama');
 
 const { Client } = require('./index.js');
-const { osu_key } = require('../config.json');
+const { osu_key } = require('./config.json');
+const { sConfig } = require('./dbObjects.js');
 
 module.exports = {
+	/**
+	 * Checks user permissions
+	 * @param {Object} user User to check
+	 * @param {string} perm Permission to check
+	 * @param {Object} message Discord Message
+	 * @returns {boolean}
+	 */
 	checkPerm(user, perm, message) {
-		if (message.channel.type === 'DM') return true;
+		if (message.channel.type === ChannelType.DM) return true;
 		if (user.permissions.has(perm)) {
 			return true;
 		} else {
@@ -19,6 +27,11 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Gets emoji that matches star level
+	 * @param {string} star Star level of map
+	 * @returns {Object} Discord Emoji
+	 */
 	getDiff(star) {
 		/** @const {Object} emoji Discord Emoji */
 		const emoji = Client.emojis.cache;
@@ -48,6 +61,11 @@ module.exports = {
 		return diffEmote;
 	},
 
+	/**
+	 * Gets emoji that matches rank
+	 * @param {string} rank Rank on osu! score
+	 * @returns {Object} Discord Emoji
+	 */
 	getRank(rank) {
 		/** @const {Object} emoji Discord Emoji */
 		const emoji = Client.emojis.cache;
@@ -86,6 +104,12 @@ module.exports = {
 		return e;
 	},
 
+	/**
+	 * Sets the rank for member
+	 * @param {Object} member Discord Member
+	 * @param {number} rank osu! rank
+	 * @param {number} mode osu! mode
+	 */
 	async getRankRole(member, rank, mode) {
 		let role;
 		if (mode === 0) {
@@ -282,7 +306,13 @@ module.exports = {
 		member.roles.add(role);
 	},
 
+	/**
+	 * Returns short mods
+	 * @param {string[]} mods
+	 * @returns {string} Short mods
+	 */
 	getShortMods(mods) {
+		console.log(mods);
 		/** @const {string[]} osu_mods osu! long form mods */
 		const osu_mods = [
 			'None',
@@ -327,6 +357,11 @@ module.exports = {
 		return shortMods;
 	},
 
+	/**
+	 * Detects map in message
+	 * @param {Object} msg Message
+	 * @returns {Object} Discord Embed
+	 */
 	mapDetect(msg) {
 		const osuApi = new osu.Api(osu_key);
 
@@ -398,7 +433,7 @@ module.exports = {
 					const [{ value: umonth },, { value: uday },, { value: uyear }] = dateTimeFormat.formatToParts(udate);
 
 					// Create the embed
-					const osuEmbed = new MessageEmbed()
+					const osuEmbed = new EmbedBuilder()
 						.setColor('0xff69b4')
 						.setAuthor(map.creator, `http://a.ppy.sh/${u.id}`)
 						.setTitle(`${map.artist} - ${map.title} (${map.version})`)
@@ -420,6 +455,93 @@ Circles: ${map.objects.normal} | Sliders: ${map.objects.slider} | Spinners: ${ma
 		});
 	},
 
+	/**
+	 * Returns embed that logs mod actions
+	 * @param {Object} mod Moderator
+	 * @param {Object} member TargetEmbedBuilder
+	 * @param {string} action Moderator action
+	 * @param {string} reason Reason for action
+	 * @param {number} length Length of action
+	 * @returns {promise} Discord Embed
+	 */
+	async modAction(mod, member, action, reason, length) {
+		const serverConfig = await sConfig.findOne({ where: { guild_id: member.guild.id } });
+		const modLog = serverConfig.get('mod_logging');
+		const modChannel = serverConfig.get('mod_channel');
+		const modC = member.guild.channels.cache.get(modChannel);
+
+		if (!modLog) return;
+
+		if (modC) {
+			if (!reason) reason = 'No Reason Given';
+
+			switch(action) {
+			case 'Kick':
+				const kickEmbed = new EmbedBuilder()
+					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
+					.setDescription(`**Action**: Kick
+**User**: ${member.user.tag} (${member.user.id})
+**Reason**: ${reason}`)
+					.setTimestamp();
+				modC.send({ embeds: [kickEmbed] });
+				break;
+			case 'Ban':
+				const banEmbed = new EmbedBuilder()
+					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
+					.setDescription(`**Action**: ${action}
+**User**: ${member.user.tag} (${member.user.id})
+**Reason**: ${reason}`)
+					.setTimestamp();
+				modC.send({ embeds: [banEmbed] });
+				break;
+			case 'SoftBan':
+				const softBanEmbed = new EmbedBuilder()
+					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
+					.setDescription(`**Action**: ${action}
+**User**: ${member.user.tag} (${member.user.id})
+**Reason**: ${reason}`)
+					.setTimestamp();
+				modC.send({ embeds: [softBanEmbed] });
+				break;
+			case 'Mute':
+				const muteEmbed = new EmbedBuilder()
+					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
+					.setDescription(`**Action**: ${action}
+**User**: ${member.user.tag} (${member.user.id})
+**Reason**: ${reason}`)
+					.setTimestamp();
+				modC.send({ embeds: [muteEmbed] });
+				break;
+			case 'TempMute':
+				const tempMuteEmbed = new EmbedBuilder()
+					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
+					.setDescription(`**Action**: ${action}
+**User**: ${member.user.tag} (${member.user.id})
+**Length**: ${length}
+**Reason**: ${reason}`)
+					.setTimestamp();
+				modC.send({ embeds: [tempMuteEmbed] });
+				break;
+			case 'Unmute':
+				const unMuteEmbed = new EmbedBuilder()
+					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
+					.setDescription(`**Action**: ${action}
+**User**: ${member.user.tag} (${member.user.id})
+**Reason**: ${reason}`)
+					.setTimestamp();
+				modC.send({ embeds: [unMuteEmbed] });
+				break;
+			default:
+				console.log('[ERROR] Couldn\'t find moderator action.');
+			}
+		}
+	},
+
+	/**
+	 * Returns the time since the date
+	 * @param {number} date
+	 * @returns {string} The time since the date
+	 */
 	timeSince(date) {
 		/** @const {number} seconds Seconds since date has passed */
 		const seconds = Math.floor((Date.now() - date) / 1000);
