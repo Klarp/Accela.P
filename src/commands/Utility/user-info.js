@@ -6,6 +6,7 @@ const { EmbedBuilder } = require('discord.js');
 const { Client } = require('../../index.js');
 const { timeSince } = require('../../utils');
 
+
 module.exports = {
 	name: 'user-info',
 	aliases: ['userinfo', 'uinfo'],
@@ -101,7 +102,7 @@ module.exports = {
 		const infoEmbed = new EmbedBuilder()
 			.setTitle(`${statusEmoji} ${target.tag} (${target.id})`)
 			.setThumbnail(target.displayAvatarURL({ dynamic : true }))
-			.setColor('#af152a')
+			.setColor('BLUE')
 			.setDescription(`**Nickname:** ${name} 
 **Status:** ${status}
 **Custom Status:** ${customStatus}
@@ -110,7 +111,7 @@ module.exports = {
 **Joined Server:** ${joinSince} \`${jday} ${jmonth} ${jyear} ${joinTime}\`
 			
 **Roles:** ${roles}`)
-			.setFooter({ text: `Joined Discord: ${createdSince} (${cday} ${cmonth} ${cyear} ${createdTime})` });
+			.setFooter(`Joined Discord: ${createdSince} (${cday} ${cmonth} ${cyear} ${createdTime})`);
 
 		message.channel.send({ embeds: [infoEmbed] });
 	},

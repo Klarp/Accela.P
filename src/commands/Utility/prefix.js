@@ -2,8 +2,8 @@
 
 const { EmbedBuilder } = require('discord.js');
 
-const { sConfig } = require('../../../database/dbObjects');
-const Sentry = require('../../../log');
+const { sConfig } = require('../../dbObjects');
+const Sentry = require('../../log');
 
 module.exports = {
 	name: 'prefix',

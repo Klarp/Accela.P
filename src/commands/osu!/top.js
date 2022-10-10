@@ -3,8 +3,8 @@
 const osu = require('node-osu');
 const curl = require('curl');
 
+const { EmbedBuilder } = require('discord.js');
 const { modbits, parser, diff, ppv2 } = require('ojsama');
-const { MessageEmbed } = require('discord.js');
 
 const Sentry = require('../../log');
 const { Client } = require('../../index');
@@ -171,7 +171,7 @@ module.exports = {
 				const rDate = timeSince(recent.date.getTime());
 
 				// Create embed (Need to stlye this better)
-				const osuEmbed = new MessageEmbed()
+				const osuEmbed = new EmbedBuilder()
 					.setAuthor(recent.user.name || name, `http://a.ppy.sh/${recent.user.id}`, `https://osu.ppy.sh/u/${recent.user.id}`)
 					.setColor('#af152a')
 					.setTitle(`${recent.beatmap.artist} - ${recent.beatmap.title} [${recent.beatmap.version}]`)

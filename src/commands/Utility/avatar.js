@@ -6,6 +6,7 @@ module.exports = {
 	description: 'Gets the avatar of the user',
 	module: 'Utility',
 	usage: '<user>',
+	cooldown: 60,
 	execute(message, args) {
 		if (args[0] === '-s') {
 			let menMember = message.mentions.members.first();
@@ -20,9 +21,9 @@ module.exports = {
 			if (!menMember && memberFlag) menMember = message.member;
 
 			if (menMember) {
-				message.channel.send(menMember.displayAvatarURL({ dynamic: true }));
+				message.channel.send(menMember.displayAvatarURL({ size: 2048, dynamic: true }));
 			} else {
-				message.channel.send(message.member.displayAvatarURL({ dynamic: true }));
+				message.channel.send(message.member.displayAvatarURL({ size: 2048, dynamic: true }));
 			}
 		} else {
 			let menUser = message.mentions.users.first();
@@ -35,9 +36,9 @@ module.exports = {
 			if (!menUser && userFlag) menUser = message.user;
 
 			if(menUser) {
-				message.channel.send(menUser.displayAvatarURL({ dynamic: true }));
+				message.channel.send(menUser.displayAvatarURL({ size: 2048, dynamic: true }));
 			} else {
-				message.channel.send(message.author.displayAvatarURL({ dynamic: true }));
+				message.channel.send(message.author.displayAvatarURL({ size: 2048, dynamic: true }));
 			}
 		}
 	},

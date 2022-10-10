@@ -3,7 +3,7 @@
 const axios = require('axios');
 const osu = require('node-osu');
 
-const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField, ChannelType } = require('discord.js');
 
 const Sentry = require('../../../log');
 const { getRankRole } = require('../../utils');
@@ -34,7 +34,8 @@ module.exports = {
 		if (args[0]) {
 
 			// DELETES MESSAGE IF USED IN GUILD
-			if (message.channel.type !== 1) {
+
+			if (message.channel.type !== ChannelType.DM) {
 				if (!message.guild.members.me.permissions.has(PermissionsBitField.Flags.ManageMessages)) return message.channel.send('Please use another code inside my DMs! **The code is private and one time use!**');
 				message.delete();
 				return message.reply('Please use another code inside my DMs');
@@ -218,8 +219,7 @@ Rank (osu!std): ${userStat.global_rank}`)
 						.setDescription('Please try again with a new code.');
 					message.channel.send({ embeds: [errorEmbed] });
 					logChannel.send(`:x: ${message.author} (ID: ${message.author.id}) failed to verify`);
-					Sentry.captureException(err);
-					console.log(err.response.status);
+					console.log(err.response.data);
 				});
 		}
 	},

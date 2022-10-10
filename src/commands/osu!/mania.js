@@ -5,12 +5,12 @@
 
 const osu = require('node-osu');
 
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ChannelType } = require('discord.js');
 
-const Sentry = require('../../../log');
+const Sentry = require('../../log');
 const { Client } = require('../../index');
-const { osu_key } = require('../../../config.json');
-const { Users, sConfig } = require('../../../database/dbObjects');
+const { osu_key } = require('../../config.json');
+const { Users, sConfig } = require('../../dbObjects');
 
 module.exports = {
 	name: 'mania',
@@ -48,7 +48,7 @@ module.exports = {
 		let id;
 		let verified = `:x: Not Verified [use ${prefix}verify]`;
 
-		if (message.channel.type !== 'DM') {
+		if (message.channel.type !== ChannelType.DM) {
 			const serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
 			if (serverConfig) {
 				prefix = serverConfig.get('prefix');
@@ -140,7 +140,7 @@ module.exports = {
 
 			// Create the embed
 			const osuEmbed = new EmbedBuilder()
-				.setAuthor({ name: `${user.name || name}`, iconURL: `http://a.ppy.sh/${user.id}`, url: `https://osu.ppy.sh/u/${user.id}` })
+				.setAuthor(`${user.name || name}`, `http://a.ppy.sh/${user.id}`, `https://osu.ppy.sh/u/${user.id}`)
 				.setColor('#af152a')
 				.setTitle(`Information On ${user.name}`)
 				.setURL(`https://osu.ppy.sh/u/${user.id}`)
@@ -150,7 +150,7 @@ module.exports = {
 **PP** ${Math.round(user.pp.raw)} | **Accuracy** ${acc} | **Play Count** ${playCount}
 
 ${verified}`)
-				.setFooter({ text: `osu!mania • Joined ${d}` });
+				.setFooter(`osu!mania • Joined ${d}`);
 				/*
 				.addField('Accuracy', user.accuracyFormatted, true)
 				.addField('Play Count', user.counts.plays, true)

@@ -1,12 +1,12 @@
 // Copyright (C) 2022 Brody Jagoe
 
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ChannelType } = require('discord.js');
 
-const Sentry = require('../../../log');
-const { prefix } = require('../../../config.json');
+const Sentry = require('../../log');
+const { prefix } = require('../../config.json');
 const { checkPerm } = require('../../utils');
-const { owners } = require('../../../config.json');
-const { sConfig } = require('../../../database/dbObjects');
+const { owners } = require('../../config.json');
+const { sConfig } = require('../../dbObjects');
 
 function ucFirst(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
@@ -26,7 +26,7 @@ module.exports = {
 		let serverConfig;
 		let sprefix = prefix;
 
-		if (message.channel.type !== 'DM') {
+		if (message.channel.type === ChannelType.GuildText) {
 			serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
 		}
 
@@ -36,14 +36,12 @@ module.exports = {
 
 		if (!args.length) {
 			const helpEmbed = new EmbedBuilder()
-				.setAuthor({ name: message.client.user.tag, iconURL: message.client.user.displayAvatarURL() })
+				.setAuthor(message.client.user.tag, message.client.user.displayAvatarURL())
 				.setTitle('Command Directory')
-				.addFields([
-					{ name: 'osu!', value: `\`${sprefix}help osu!\``, inline: true },
-					{ name: 'Fun', value : `\`${sprefix}help fun\``, inline: true },
-					{ name: 'Utility', value: `\`${sprefix}help utility\``, inline: true },
-				])
-				.setFooter({ text: `You can use ${sprefix}help [command name] to get info on a specific command!` });
+				.addField('osu!', `\`${sprefix}help osu!\``, true)
+				.addField('Fun', `\`${sprefix}help fun\``, true)
+				.addField('Utility', `\`${sprefix}help utility\``, true)
+				.setFooter(`You can use ${sprefix}help [command name] to get info on a specific command!`);
 
 			return message.channel.send({ embeds: [helpEmbed] });
 		}
@@ -91,12 +89,12 @@ module.exports = {
 				const text = data.join('\n');
 
 				const helpEmbed = new EmbedBuilder()
-					.setColor('#af152a')
+					.setColor('BLUE')
 					.setDescription(text);
 
 				return message.author.send({ embeds: [helpEmbed] })
 					.then(() => {
-						if (message.channel.type === 'DM') return;
+						if (message.channel.type === ChannelType.DM) return;
 						message.reply('I\'ve sent you a DM with the commands!');
 					})
 					.catch(error => {

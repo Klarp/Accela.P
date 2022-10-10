@@ -47,9 +47,9 @@ module.exports = {
 		const [{ value: month },, { value: day },, { value: year }] = dateTimeFormat.formatToParts(server.createdAt);
 
 		const infoEmbed = new EmbedBuilder()
-			.setAuthor({ name: server.name, iconURL: server.iconURL({ dynamic: true }) })
+			.setAuthor(server.name, server.iconURL({ dynamic: true }))
 			.setThumbnail(server.bannerURL())
-			.setColor('#af152a')
+			.setColor('BLUE')
 			.setDescription(`**Owner:** ${owner.user.tag} (${server.ownerId})
 
 **Members:** ${server.memberCount} | **Vanity URL:** ${vanity}
@@ -60,7 +60,22 @@ module.exports = {
 **Channels:** ${totalSize} (Text: ${textSize} | Voice: ${voiceSize})
 
 **Number of Boosts:** ${server.premiumSubscriptionCount} | **Boost Level:** ${boost}`)
-			.setFooter({ text: `Created On: ${day} ${month} ${year}` });
+			.setFooter(`Created On: ${day} ${month} ${year}`);
 		message.channel.send({ embeds: [infoEmbed] });
 	},
 };
+
+/*
+Description
+Owner (Owner ID)
+Vanity URL
+Region
+Verification Level
+Channels (Text, Voice)
+Emoji Count
+# of Boosts
+Boost Level
+
+Footer:
+Created At
+*/

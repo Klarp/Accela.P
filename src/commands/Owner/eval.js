@@ -1,7 +1,8 @@
 // Copyright (C) 2022 Brody Jagoe
 
-const { EmbedBuilder } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const { inspect } = require('util');
+
 const { Client } = require('../../index');
 
 module.exports = {
@@ -14,7 +15,7 @@ module.exports = {
 	execute(message, args) {
 		const channel = message.channel;
 		const query = args.join(' ');
-		const evalEmbed = new EmbedBuilder();
+		const evalEmbed = new MessageEmbed();
 		const code = (lang, eCode) =>
 			(`\`\`\`${lang}\n${String(eCode).slice(0, 1000) + (eCode.length >= 1000 ? '...' : '')}\n\`\`\``).replace(Client.token, '*'.repeat(Client.token.length));
 
@@ -23,19 +24,19 @@ module.exports = {
 			const res = typeof evald === 'string' ? evald : inspect(evald, { depth: 0 });
 
 			evalEmbed
-				.addFields({ name:'Result', value: code('js', res) });
+				.addField('Result', code('js', res));
 
 			if (!res || (!evald && evald !== 0)) {
-				evalEmbed.setColor('#ff0000');
+				evalEmbed.setColor('RED');
 			} else {
 				evalEmbed
-					.addFields({ name: 'Type', value: code('css', typeof evald) })
-					.setColor('#00FF00');
+					.addField('Type', code('css', typeof evald))
+					.setColor('GREEN');
 			}
 		} catch (error) {
 			evalEmbed
-				.addFields({ name: 'Error', value: code('js', error) })
-				.setColor('#ff0000');
+				.addField('Error', code('js', error))
+				.setColor('RED');
 		} finally {
 			channel.send({ embeds: [evalEmbed] }).catch(error => {
 				channel.send(`Error: ${error.message}`);

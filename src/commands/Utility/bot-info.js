@@ -1,9 +1,10 @@
 // Copyright (C) 2022 Brody Jagoe
 
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, MessageActionRow, MessageButton } = require('discord.js');
+
 const { Client } = require('../../index');
-const { sConfig } = require('../../../database/dbObjects');
-const { version } = require('../../../package.json');
+const { sConfig } = require('../../dbObjects');
+const { version } = require('../../package.json');
 
 module.exports = {
 	name: 'bot-info',
@@ -17,12 +18,11 @@ module.exports = {
 			prefix = serverConfig.get('prefix');
 		}
 		const bot = Client.user;
-		const me = message.guild.members.me;
-		let roles = me.roles.cache
+		const me = message.guild.me;
+		const roles = me.roles.cache
 			.filter(r => r.name !== '@everyone')
 			.sort((a, b) => b.position - a.position)
 			.map(r => `${r}`).join(' | ');
-		if (!roles) roles = 'None';
 		let userCount = 0;
 
 		Client.guilds.cache
@@ -48,21 +48,21 @@ module.exports = {
 
 		const uptime = dhm(Client.uptime);
 
-		const binfoButtons = new ActionRowBuilder()
+		const binfoButtons = new MessageActionRow()
 			.addComponents(
-				new ButtonBuilder()
+				new MessageButton()
 					.setURL('https://discord.gg/jgzXHkU')
 					.setLabel('Support')
-					.setStyle(ButtonStyle.Link),
-				new ButtonBuilder()
+					.setStyle('LINK'),
+				new MessageButton()
 					.setURL('https://github.com/Klarp/Accela.P')
 					.setLabel('GitHub')
-					.setStyle(ButtonStyle.Link),
+					.setStyle('LINK'),
 			);
 
 		const infoEmbed = new EmbedBuilder()
-			.setAuthor({ name: bot.username, iconURL: bot.displayAvatarURL() })
-			.setColor('#af152a')
+			.setAuthor(bot.username, bot.displayAvatarURL())
+			.setColor('BLUE')
 			.setDescription(`**Prefix:** ${prefix}
 **Help Command:** ${prefix}help
 **Total Servers:** ${Client.guilds.cache.size} (${userCount} users)
@@ -70,7 +70,7 @@ module.exports = {
 **Uptime:** ${uptime}
 			
 **Roles:** ${roles}`)
-			.setFooter({ text: `Created by: Klarp#0001 | Version: ${version} | Framework: discord.js v14.0.1` });
+			.setFooter(`Created by: Klarp#0001 | Version: ${version} | Framework: discord.js`);
 		message.channel.send({ embeds: [infoEmbed], components: [binfoButtons] });
 	},
 };

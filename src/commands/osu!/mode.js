@@ -4,10 +4,10 @@ const osu = require('node-osu');
 
 const { EmbedBuilder } = require('discord.js');
 
-const Sentry = require('../../../log');
+const Sentry = require('../../log');
 const { Client } = require('../../index');
-const { Users } = require('../../../database/dbObjects');
-const { osu_key } = require('../../../config.json');
+const { Users } = require('../../dbObjects');
+const { osu_key } = require('../../config.json');
 const { getRankRole } = require('../../utils');
 
 module.exports = {
@@ -51,7 +51,7 @@ module.exports = {
 **mania**
 **taiko**
 **ctb (Catch The Beat)**`)
-				.setFooter({ text: 'Use >>mode [mode]' });
+				.setFooter('Use >>mode [mode]');
 			message.channel.send({ embeds: [modeEmbed] });
 		} else {
 			const mode = args[0].toLowerCase();
