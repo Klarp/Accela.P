@@ -1,8 +1,8 @@
 // Copyright (C) 2022 Brody Jagoe
 
-const Sentry = require('../../log');
+const Sentry = require('../../../log');
 const { Client } = require('../../index');
-const { Users } = require('../../dbObjects');
+const { Users } = require('../../../database/dbObjects');
 
 module.exports = {
 	name: 'unlink',

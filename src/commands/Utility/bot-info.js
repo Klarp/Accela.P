@@ -3,8 +3,8 @@
 const { EmbedBuilder, MessageActionRow, MessageButton } = require('discord.js');
 
 const { Client } = require('../../index');
-const { sConfig } = require('../../dbObjects');
-const { version } = require('../../package.json');
+const { sConfig } = require('../../../database/dbObjects');
+const { version } = require('../../../package.json');
 
 module.exports = {
 	name: 'bot-info',

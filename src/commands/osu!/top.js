@@ -6,10 +6,10 @@ const curl = require('curl');
 const { EmbedBuilder } = require('discord.js');
 const { modbits, parser, diff, ppv2 } = require('ojsama');
 
-const Sentry = require('../../log');
+const Sentry = require('../../../log');
 const { Client } = require('../../index');
-const { osu_key } = require('../../config.json');
-const { Users, sConfig } = require('../../dbObjects');
+const { osu_key } = require('../../../config.json');
+const { Users, sConfig } = require('../../../database/dbObjects');
 const { timeSince, getShortMods, getRank, getDiff } = require('../../utils');
 
 module.exports = {

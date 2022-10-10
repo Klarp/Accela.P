@@ -1,6 +1,6 @@
 // Copyright (C) 2022 Brody Jagoe
 
-const { Users } = require('../../dbObjects');
+const { Users } = require('../../../database/dbObjects');
 
 module.exports = {
 	name: 'db-count',

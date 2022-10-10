@@ -2,9 +2,9 @@
 
 const osu = require('node-osu');
 
-const Sentry = require('../../log');
-const { Users } = require('../../dbObjects');
-const { osu_key } = require('../../config.json');
+const Sentry = require('../../../log');
+const { Users } = require('../../../database/dbObjects');
+const { osu_key } = require('../../../config.json');
 
 
 module.exports = {

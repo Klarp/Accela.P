@@ -2,11 +2,10 @@
 
 const { EmbedBuilder, ChannelType } = require('discord.js');
 
-const Sentry = require('../../log');
-const { prefix } = require('../../config.json');
+const Sentry = require('../../../log');
+const { prefix, owners } = require('../../../config.json');
 const { checkPerm } = require('../../utils');
-const { owners } = require('../../config.json');
-const { sConfig } = require('../../dbObjects');
+const { sConfig } = require('../../../database/dbObjects');
 
 function ucFirst(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);

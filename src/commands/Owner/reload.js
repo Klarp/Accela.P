@@ -1,6 +1,6 @@
 // Copyright (C) 2022 Brody Jagoe
 
-const Sentry = require('../../log');
+const Sentry = require('../../../log');
 
 module.exports = {
 	name: 'reload',

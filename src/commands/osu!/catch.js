@@ -4,10 +4,10 @@ const osu = require('node-osu');
 
 const { EmbedBuilder, ChannelType } = require('discord.js');
 
-const Sentry = require('../../log');
+const Sentry = require('../../../log');
 const { Client } = require('../../index');
-const { osu_key } = require('../../config.json');
-const { Users, sConfig } = require('../../dbObjects');
+const { osu_key } = require('../../../config.json');
+const { Users, sConfig } = require('../../../database/dbObjects');
 
 module.exports = {
 	name: 'catch',

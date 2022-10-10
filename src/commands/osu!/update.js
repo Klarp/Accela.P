@@ -4,10 +4,10 @@ const osu = require('node-osu');
 
 const { EmbedBuilder, ChannelType } = require('discord.js');
 
-const Sentry = require('../../log');
+const Sentry = require('../../../log');
 const util = require('../../utils');
-const { osu_key, owners } = require('../../config.json');
-const { Users, sConfig } = require('../../dbObjects');
+const { osu_key, owners } = require('../../../config.json');
+const { Users, sConfig } = require('../../../database/dbObjects');
 const { Client } = require('../../index');
 
 

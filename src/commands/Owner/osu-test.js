@@ -1,7 +1,7 @@
 // Copyright (C) 2022 Brody Jagoe
 
-const { MessageEmbed } = require('discord.js');
-const { Users } = require('../../dbObjects');
+const { EmbedBuilder } = require('discord.js');
+const { Users } = require('../../../database/dbObjects');
 
 module.exports = {
 	name: 'osu-test',
@@ -34,7 +34,7 @@ module.exports = {
 		const ctb_rank = user.get('ctb_rank');
 		const mania_rank = user.get('mania_rank');
 
-		const searchEmbed = new MessageEmbed()
+		const searchEmbed = new EmbedBuilder()
 			.setAuthor(`${menUser.user.tag} (${menUser.id})`)
 			.setTitle(`${menUser.displayName}'s Info`)
 			.setColor('0xff69b4')

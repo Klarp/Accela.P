@@ -4,10 +4,10 @@ const osu = require('node-osu');
 
 const { EmbedBuilder } = require('discord.js');
 
-const Sentry = require('../../log');
+const Sentry = require('../../../log');
 const { Client } = require('../../index');
-const { Users } = require('../../dbObjects');
-const { osu_key } = require('../../config.json');
+const { Users } = require('../../../database/dbObjects');
+const { osu_key } = require('../../../config.json');
 const { getRankRole } = require('../../utils');
 
 module.exports = {
