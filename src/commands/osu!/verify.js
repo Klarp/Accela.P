@@ -37,7 +37,7 @@ module.exports = {
 
 			if (message.channel.type !== ChannelType.DM) {
 				if (message.guild.members.me.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-					message.reply('Please use another code inside my DMs');
+					await message.reply('Please use another code inside my DMs');
 					return message.delete();
 				} else {
 					return message.reply('**Please you the verification code in my DMs as they are private and one time use!**');
