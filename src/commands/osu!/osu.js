@@ -118,8 +118,10 @@ module.exports = {
 			// vEmote = Client.emojis.cache.get(764167424202899498);
 
 			// Create the embed
+			const osuName = user.name || name;
+
 			const osuEmbed = new EmbedBuilder()
-				.setAuthor(`${user.name || name}`, `http://a.ppy.sh/${user.id}`, `https://osu.ppy.sh/u/${user.id}`)
+				.setAuthor({ name: osuName, iconURL: `http://a.ppy.sh/${user.id}`, url: `https://osu.ppy.sh/u/${user.id}` })
 				.setColor('#af152a')
 				.setTitle(`Information On ${user.name}`)
 				.setURL(`https://osu.ppy.sh/u/${user.id}`)
@@ -129,7 +131,7 @@ module.exports = {
 **PP** ${Math.round(user.pp.raw)} | **Accuracy** ${acc} | **Play Count** ${playCount}
 
 ${verified}`)
-				.setFooter(`osu!std • Joined ${d}`);
+				.setFooter({ text: `osu!std • Joined ${d}` });
 				/*
 				.addField('Accuracy', user.accuracyFormatted, true)
 				.addField('Play Count', user.counts.plays, true)

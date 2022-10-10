@@ -10,7 +10,7 @@ module.exports = {
 	execute(message) {
 		const bot = Client.user;
 		const invEmbed = new EmbedBuilder()
-			.setAuthor(bot.username, bot.displayAvatarURL())
+			.setAuthor({ name: bot.username, iconURL: bot.displayAvatarURL() })
 			.setTitle('Join Accela\'s Support Server')
 			.setColor('#2F3136')
 			.setURL('https://discord.gg/jgzXHkU');

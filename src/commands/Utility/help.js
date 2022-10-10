@@ -35,12 +35,14 @@ module.exports = {
 
 		if (!args.length) {
 			const helpEmbed = new EmbedBuilder()
-				.setAuthor(message.client.user.tag, message.client.user.displayAvatarURL())
+				.setAuthor({ name: message.client.user.tag, iconURL: message.client.user.displayAvatarURL() })
 				.setTitle('Command Directory')
-				.addField('osu!', `\`${sprefix}help osu!\``, true)
-				.addField('Fun', `\`${sprefix}help fun\``, true)
-				.addField('Utility', `\`${sprefix}help utility\``, true)
-				.setFooter(`You can use ${sprefix}help [command name] to get info on a specific command!`);
+				.addFields([
+					{ name: 'osu!', value: `\`${sprefix}help osu!\``, inline: true },
+					{ name: 'Fun', value : `\`${sprefix}help fun\``, inline: true },
+					{ name: 'Utility', value: `\`${sprefix}help utility\``, inline: true },
+				])
+				.setFooter({ text: `You can use ${sprefix}help [command name] to get info on a specific command!` });
 
 			return message.channel.send({ embeds: [helpEmbed] });
 		}

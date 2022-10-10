@@ -129,7 +129,7 @@ module.exports = {
 
 			// Create the embed
 			const osuEmbed = new EmbedBuilder()
-				.setAuthor(`${user.name || name}`, `http://a.ppy.sh/${user.id}`, `https://osu.ppy.sh/u/${user.id}`)
+				.setAuthor({ name: `${user.name || name}`, iconURL: `http://a.ppy.sh/${user.id}`, url: `https://osu.ppy.sh/u/${user.id}` })
 				.setColor('#af152a')
 				.setTitle(`Information On ${user.name}`)
 				.setURL(`https://osu.ppy.sh/u/${user.id}`)
@@ -139,7 +139,7 @@ module.exports = {
 **PP** ${Math.round(user.pp.raw)} | **Accuracy** ${acc} | **Play Count** ${playCount}
 
 ${verified}`)
-				.setFooter(`osu!ctb • Joined ${d}`);
+				.setFooter({ text: `osu!ctb • Joined ${d}` });
 				/*
 				.addField('Accuracy', user.accuracyFormatted, true)
 				.addField('Play Count', user.counts.plays, true)

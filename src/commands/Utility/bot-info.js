@@ -1,7 +1,6 @@
 // Copyright (C) 2022 Brody Jagoe
 
 const { EmbedBuilder, MessageActionRow, MessageButton } = require('discord.js');
-
 const { Client } = require('../../index');
 const { sConfig } = require('../../../database/dbObjects');
 const { version } = require('../../../package.json');
@@ -18,7 +17,7 @@ module.exports = {
 			prefix = serverConfig.get('prefix');
 		}
 		const bot = Client.user;
-		const me = message.guild.me;
+		const me = message.guild.members.me;
 		const roles = me.roles.cache
 			.filter(r => r.name !== '@everyone')
 			.sort((a, b) => b.position - a.position)
@@ -61,7 +60,7 @@ module.exports = {
 			);
 
 		const infoEmbed = new EmbedBuilder()
-			.setAuthor(bot.username, bot.displayAvatarURL())
+			.setAuthor({ name: bot.username, iconURL: bot.displayAvatarURL() })
 			.setColor('BLUE')
 			.setDescription(`**Prefix:** ${prefix}
 **Help Command:** ${prefix}help
@@ -70,7 +69,7 @@ module.exports = {
 **Uptime:** ${uptime}
 			
 **Roles:** ${roles}`)
-			.setFooter(`Created by: Klarp#0001 | Version: ${version} | Framework: discord.js`);
+			.setFooter({ text: `Created by: Klarp#0001 | Version: ${version} | Framework: discord.js v14.0.1` });
 		message.channel.send({ embeds: [infoEmbed], components: [binfoButtons] });
 	},
 };

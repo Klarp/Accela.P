@@ -35,7 +35,7 @@ module.exports = {
 		const mania_rank = user.get('mania_rank');
 
 		const searchEmbed = new EmbedBuilder()
-			.setAuthor(`${menUser.user.tag} (${menUser.id})`)
+			.setAuthor({ name: `${menUser.user.tag} (${menUser.id})` })
 			.setTitle(`${menUser.displayName}'s Info`)
 			.setColor('0xff69b4')
 			.setDescription(`Current Mode: ${mode}

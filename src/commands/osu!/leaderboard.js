@@ -3,7 +3,7 @@
 const { EmbedBuilder, Collection, ChannelType } = require('discord.js');
 
 const { timeSince } = require('../../utils');
-const { upDate } = require('../../index');
+const { upDate } = require('../../events/ready');
 const { Users, sConfig } = require('../../../database/dbObjects');
 
 const userList = new Collection();

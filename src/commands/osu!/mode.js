@@ -51,7 +51,7 @@ module.exports = {
 **mania**
 **taiko**
 **ctb (Catch The Beat)**`)
-				.setFooter('Use >>mode [mode]');
+				.setFooter({ text: 'Use >>mode [mode]' });
 			message.channel.send({ embeds: [modeEmbed] });
 		} else {
 			const mode = args[0].toLowerCase();

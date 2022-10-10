@@ -5,11 +5,10 @@ const osu = require('node-osu');
 const { EmbedBuilder, ChannelType } = require('discord.js');
 
 const Sentry = require('../../../log');
-const util = require('../../utils');
+const { getRankRole } = require('../../utils');
 const { osu_key, owners } = require('../../../config.json');
 const { Users, sConfig } = require('../../../database/dbObjects');
 const { Client } = require('../../index');
-
 
 module.exports = {
 	name: 'update',
@@ -91,7 +90,7 @@ module.exports = {
 						if (mode === 3 && mania_rank !== null) rank = mania_rank;
 						const osuMember = osuGame.members.cache.get(userID);
 						if (osuMember) {
-							util.getRankRole(osuMember, rank, mode);
+							getRankRole(osuMember, rank, mode);
 							logChannel.send(`**Updating ${message.author}**`);
 						}
 					}
@@ -107,7 +106,7 @@ module.exports = {
 
 					const updateEmbed = new EmbedBuilder()
 						.setTitle('Verification Update')
-						.setAuthor(message.author.tag)
+						.setAuthor({ name: message.author.tag })
 						.setColor('#af152a')
 						.setDescription(`Mode: ${osuMode}
 osu!std: ${std_rank}
@@ -185,7 +184,7 @@ osu!mania: ${mania_rank}`);
 						const osuMember = osuGame.members.cache.get(userID);
 						if (osuMember) {
 							console.log(osuMember);
-							util.getRankRole(osuMember, rank, mode);
+							getRankRole(osuMember, rank, mode);
 						}
 					}
 				} catch (err) {
@@ -267,7 +266,7 @@ osu!mania: ${mania_rank}`);
 						if (mode === 3 && mania_rank !== null) rank = mania_rank;
 						const osuMember = osuGame.members.cache.get(userID);
 						if (osuMember) {
-							util.getRankRole(osuMember, rank, mode);
+							getRankRole(osuMember, rank, mode);
 							logChannel.send(`**Updating ${message.author}**`);
 						}
 					}

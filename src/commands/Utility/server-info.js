@@ -47,7 +47,7 @@ module.exports = {
 		const [{ value: month },, { value: day },, { value: year }] = dateTimeFormat.formatToParts(server.createdAt);
 
 		const infoEmbed = new EmbedBuilder()
-			.setAuthor(server.name, server.iconURL({ dynamic: true }))
+			.setAuthor({ name: server.name, iconURL: server.iconURL({ dynamic: true }) })
 			.setThumbnail(server.bannerURL())
 			.setColor('BLUE')
 			.setDescription(`**Owner:** ${owner.user.tag} (${server.ownerId})
@@ -60,7 +60,7 @@ module.exports = {
 **Channels:** ${totalSize} (Text: ${textSize} | Voice: ${voiceSize})
 
 **Number of Boosts:** ${server.premiumSubscriptionCount} | **Boost Level:** ${boost}`)
-			.setFooter(`Created On: ${day} ${month} ${year}`);
+			.setFooter({ text: `Created On: ${day} ${month} ${year}` });
 		message.channel.send({ embeds: [infoEmbed] });
 	},
 };

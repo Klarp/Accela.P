@@ -1,23 +1,7 @@
-/* eslint-disable no-case-declarations */
-
-const curl = require('curl');
-const osu = require('node-osu');
-
-const { EmbedBuilder, ChannelType } = require('discord.js');
-const { parser, diff, ppv2 } = require('ojsama');
-
-const { Client } = require('../src/index');
-const { osu_key } = require('../config.json');
-const { sConfig } = require('../database/dbObjects');
+// Copyright (C) 2022 Brody Jagoe
+const { ChannelType } = require('discord.js');
 
 module.exports = {
-	/**
-	 * Checks user permissions
-	 * @param {Object} user User to check
-	 * @param {string} perm Permission to check
-	 * @param {Object} message Discord Message
-	 * @returns {boolean}
-	 */
 	checkPerm(user, perm, message) {
 		if (message.channel.type === ChannelType.DM) return true;
 		if (user.permissions.has(perm)) {
@@ -26,90 +10,6 @@ module.exports = {
 			return false;
 		}
 	},
-
-	/**
-	 * Gets emoji that matches star level
-	 * @param {string} star Star level of map
-	 * @returns {Object} Discord Emoji
-	 */
-	getDiff(star) {
-		/** @const {Object} emoji Discord Emoji */
-		const emoji = Client.emojis.cache;
-
-		let diffEmote;
-
-		if (star < '2') {
-			// Easy
-			diffEmote = emoji.get('738125708802654322');
-		} else if (star < '2.7') {
-			// Normal
-			diffEmote = emoji.get('738125709180010557');
-		} else if (star < '4') {
-			// Hard
-			diffEmote = emoji.get('738125709113032716');
-		} else if (star < '5.3') {
-			// Insane
-			diffEmote = emoji.get('738125709129547947');
-		} else if (star < '6.5') {
-			// Expert
-			diffEmote = emoji.get('738125708810780744');
-		} else {
-			// Expert+
-			diffEmote = emoji.get('738125708781682719');
-		}
-
-		return diffEmote;
-	},
-
-	/**
-	 * Gets emoji that matches rank
-	 * @param {string} rank Rank on osu! score
-	 * @returns {Object} Discord Emoji
-	 */
-	getRank(rank) {
-		/** @const {Object} emoji Discord Emoji */
-		const emoji = Client.emojis.cache;
-		let e;
-
-		switch (rank) {
-		case 'XH':
-			e = emoji.get('734198887836942357');
-			break;
-		case 'X':
-			e = emoji.get('734198888277213205');
-			break;
-		case 'SH':
-			e = emoji.get('734198887677427784');
-			break;
-		case 'S':
-			e = emoji.get('734198888025555115');
-			break;
-		case 'A':
-			e = emoji.get('734198887568506941');
-			break;
-		case 'B':
-			e = emoji.get('734198887941668995');
-			break;
-		case 'C':
-			e = emoji.get('734198887820034129');
-			break;
-		case 'D':
-			e = emoji.get('734198887858044998');
-			break;
-		default:
-			e = emoji.get('734450801346347018');
-			break;
-		}
-
-		return e;
-	},
-
-	/**
-	 * Sets the rank for member
-	 * @param {Object} member Discord Member
-	 * @param {number} rank osu! rank
-	 * @param {number} mode osu! mode
-	 */
 	async getRankRole(member, rank, mode) {
 		let role;
 		if (mode === 0) {
@@ -251,7 +151,6 @@ module.exports = {
 			}
 		}
 
-		/** @const {string[]} roleList List of osu! Game discord roles */
 		const roleList = [
 			'754085973003993119',
 			'754086188025118770',
@@ -297,7 +196,6 @@ module.exports = {
 
 		roleList.forEach(r => {
 			if (member.roles.cache.get(r)) {
-				/** @const {number} rankRole Rank role ID */
 				const rankRole = member.roles.cache.get(r).id;
 				if (rankRole === role) return;
 				member.roles.remove(r);
@@ -305,245 +203,7 @@ module.exports = {
 		});
 		member.roles.add(role);
 	},
-
-	/**
-	 * Returns short mods
-	 * @param {string[]} mods
-	 * @returns {string} Short mods
-	 */
-	getShortMods(mods) {
-		console.log(mods);
-		/** @const {string[]} osu_mods osu! long form mods */
-		const osu_mods = [
-			'None',
-			'NoFail',
-			'Easy',
-			'Hidden',
-			'HardRock',
-			'SuddenDeath',
-			'DoubleTime',
-			'HalfTime',
-			'Nightcore',
-			'Flashlight',
-			'Autoplay',
-			'SpunOut',
-			'TouchDevice',
-		];
-
-		/** @const {Object} mod_sh osu! mod list */
-		const mod_sh = {
-			'None': 'NoMod',
-			'NoFail': 'NF',
-			'Easy': 'EZ',
-			'Hidden': 'HD',
-			'HardRock': 'HR',
-			'SuddenDeath': 'SD',
-			'DoubleTime': 'DT',
-			'HalfTime': 'HT',
-			'Nightcore': 'NC',
-			'Flashlight': 'FL',
-			'Autoplay': 'Auto',
-			'SpunOut': 'SO',
-			'TouchDevice': 'TD',
-		};
-
-		/** @const {Object} modsOnly Filters mods */
-		const modsOnly = mods.filter(mod =>
-			osu_mods.includes(mod));
-
-		/** @const {string} shortMods Short form of mods */
-		const shortMods = modsOnly.map(mod => mod_sh[mod]).join('');
-
-		return shortMods;
-	},
-
-	/**
-	 * Detects map in message
-	 * @param {Object} msg Message
-	 * @returns {Object} Discord Embed
-	 */
-	mapDetect(msg) {
-		const osuApi = new osu.Api(osu_key);
-
-		/** @const {string} bMap The beatmap id from link */
-		const bMap = msg.content.split('/').pop();
-		/** @const {Object} client The bot client */
-		const client = msg.client;
-
-		osuApi.getBeatmaps({ b: bMap }).then(beatmap => {
-			/** @const {Object} map osu! beatmap */
-			const map = beatmap[0];
-			osuApi.getUser({ u: map.creator }).then(u => {
-				curl.get(`https://osu.ppy.sh/osu/${map.id}`, function(err, response, body) {
-					/** @const {Object} parser Parsed body of beatmap */
-					const parserBody = new parser().feed(body);
-
-					/** @const {Object} pMap Parsed osu! beatmap */
-					const pMap = parserBody.map;
-
-					/** @const {string} maxPP Max pp gainable on beatmap */
-					const maxPP = ppv2({ map: pMap }).toString();
-
-					/** @const {string} ppFix Splits maxPP */
-					const ppFix = maxPP.split(' ');
-
-					/** @const {string} stars Calculated star level of beatmap*/
-					const stars = new diff().calc({ map: pMap });
-
-					/** @const {string[]} star Star level of string split */
-					const star = stars.toString().split(' ');
-
-					/** @const {string} s Isolated star level of star */
-					const s = star[0];
-
-					/** @const {Object} emoji Discord Emoji */
-					const emoji = client.emojis.cache;
-
-					let diffEmote;
-
-					if (s < '2') {
-						// Easy
-						diffEmote = emoji.get('738125708802654322');
-					} else if (s < '2.7') {
-						// Normal
-						diffEmote = emoji.get('738125709180010557');
-					} else if (s < '4') {
-						// Hard
-						diffEmote = emoji.get('738125709113032716');
-					} else if (s < '5.3') {
-						// Insane
-						diffEmote = emoji.get('738125709129547947');
-					} else if (s < '6.5') {
-						// Expert
-						diffEmote = emoji.get('738125708810780744');
-					} else {
-						// Expert+
-						diffEmote = emoji.get('738125708781682719');
-					}
-
-					const lenMinutes = Math.floor(map.length.total / 60);
-					const lenSeconds = map.length.total - lenMinutes * 60;
-					const drainMinutes = Math.floor(map.length.drain / 60);
-					const drainSeconds = map.length.drain - drainMinutes * 60;
-
-					const adate = map.approvedDate;
-					const dateTimeFormat = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: '2-digit' });
-					const [{ value: amonth },, { value: aday },, { value: ayear }] = dateTimeFormat.formatToParts(adate);
-					const udate = map.lastUpdate;
-					const [{ value: umonth },, { value: uday },, { value: uyear }] = dateTimeFormat.formatToParts(udate);
-
-					// Create the embed
-					const osuEmbed = new EmbedBuilder()
-						.setColor('0xff69b4')
-						.setAuthor(map.creator, `http://a.ppy.sh/${u.id}`)
-						.setTitle(`${map.artist} - ${map.title} (${map.version})`)
-						.setThumbnail(`https://b.ppy.sh/thumb/${map.beatmapSetId}l.jpg`)
-						.setURL(`https://osu.ppy.sh/b/${map.id}`)
-						.setDescription(`${diffEmote} ${star[0]}★ | Length: ${lenMinutes}:${lenSeconds} (${drainMinutes}:${drainSeconds})
-BPM: ${map.bpm} | Combo: ${map.maxCombo}x | Max PP: ${ppFix[0]}pp
-Circles: ${map.objects.normal} | Sliders: ${map.objects.slider} | Spinners: ${map.objects.spinner}`)
-						.setFooter(`${map.approvalStatus} on ${aday}-${amonth}-${ayear} | Last Updated: ${uday}-${umonth}-${uyear}`);
-
-					msg.channel.send({ embeds: [osuEmbed] });
-				});
-			}).catch(e => {
-				console.error(e);
-			});
-		}).catch(e => {
-			console.error(e);
-			return msg.reply('No map was found!');
-		});
-	},
-
-	/**
-	 * Returns embed that logs mod actions
-	 * @param {Object} mod Moderator
-	 * @param {Object} member TargetEmbedBuilder
-	 * @param {string} action Moderator action
-	 * @param {string} reason Reason for action
-	 * @param {number} length Length of action
-	 * @returns {promise} Discord Embed
-	 */
-	async modAction(mod, member, action, reason, length) {
-		const serverConfig = await sConfig.findOne({ where: { guild_id: member.guild.id } });
-		const modLog = serverConfig.get('mod_logging');
-		const modChannel = serverConfig.get('mod_channel');
-		const modC = member.guild.channels.cache.get(modChannel);
-
-		if (!modLog) return;
-
-		if (modC) {
-			if (!reason) reason = 'No Reason Given';
-
-			switch(action) {
-			case 'Kick':
-				const kickEmbed = new EmbedBuilder()
-					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
-					.setDescription(`**Action**: Kick
-**User**: ${member.user.tag} (${member.user.id})
-**Reason**: ${reason}`)
-					.setTimestamp();
-				modC.send({ embeds: [kickEmbed] });
-				break;
-			case 'Ban':
-				const banEmbed = new EmbedBuilder()
-					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
-					.setDescription(`**Action**: ${action}
-**User**: ${member.user.tag} (${member.user.id})
-**Reason**: ${reason}`)
-					.setTimestamp();
-				modC.send({ embeds: [banEmbed] });
-				break;
-			case 'SoftBan':
-				const softBanEmbed = new EmbedBuilder()
-					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
-					.setDescription(`**Action**: ${action}
-**User**: ${member.user.tag} (${member.user.id})
-**Reason**: ${reason}`)
-					.setTimestamp();
-				modC.send({ embeds: [softBanEmbed] });
-				break;
-			case 'Mute':
-				const muteEmbed = new EmbedBuilder()
-					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
-					.setDescription(`**Action**: ${action}
-**User**: ${member.user.tag} (${member.user.id})
-**Reason**: ${reason}`)
-					.setTimestamp();
-				modC.send({ embeds: [muteEmbed] });
-				break;
-			case 'TempMute':
-				const tempMuteEmbed = new EmbedBuilder()
-					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
-					.setDescription(`**Action**: ${action}
-**User**: ${member.user.tag} (${member.user.id})
-**Length**: ${length}
-**Reason**: ${reason}`)
-					.setTimestamp();
-				modC.send({ embeds: [tempMuteEmbed] });
-				break;
-			case 'Unmute':
-				const unMuteEmbed = new EmbedBuilder()
-					.setAuthor(`${mod.tag} (${mod.id})`, mod.displayAvatarURL())
-					.setDescription(`**Action**: ${action}
-**User**: ${member.user.tag} (${member.user.id})
-**Reason**: ${reason}`)
-					.setTimestamp();
-				modC.send({ embeds: [unMuteEmbed] });
-				break;
-			default:
-				console.log('[ERROR] Couldn\'t find moderator action.');
-			}
-		}
-	},
-
-	/**
-	 * Returns the time since the date
-	 * @param {number} date
-	 * @returns {string} The time since the date
-	 */
 	timeSince(date) {
-		/** @const {number} seconds Seconds since date has passed */
 		const seconds = Math.floor((Date.now() - date) / 1000);
 
 		let interval = Math.floor(seconds / 31536000);
@@ -570,10 +230,6 @@ Circles: ${map.objects.normal} | Sliders: ${map.objects.slider} | Spinners: ${ma
 		return Math.floor(seconds) + ' seconds ago';
 	},
 
-	/**
-	 * Sleep function to stop script
-	 * @param {number} milliseconds Number of milliseconds to sleep
-	 */
 	sleep(milliseconds) {
 		const date = Date.now();
 		let currentDate = null;
