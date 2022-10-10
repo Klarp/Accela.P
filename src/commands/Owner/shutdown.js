@@ -31,7 +31,7 @@ module.exports = {
 			const collector = msg.createMessageComponentCollector({ componentType: ComponentType.Button, time: 60000 });
 
 			collector.on('collect', async button => {
-				if (!owners.includes(message.author.id)) return;
+				if (!owners.includes(button.user.id)) return;
 
 				if (button.customId === 'reset') {
 					await button.deferUpdate();
