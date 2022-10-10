@@ -130,7 +130,6 @@ module.exports = {
 		} catch (error) {
 		// If failed to execute console log the error
 			console.error(error);
-			Sentry.captureException(error);
 			// Creation of error embed
 			const errorEmbed = new EmbedBuilder()
 				.setTitle('An Error Has Occurred')
