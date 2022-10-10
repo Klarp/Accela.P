@@ -4,7 +4,6 @@ const { Collection, EmbedBuilder, ChannelType } = require('discord.js');
 const { Client } = require('../index');
 const { owners } = require('../../config.json');
 const { checkPerm } = require('../utils');
-const { Sentry } = require('../../log');
 
 const cooldowns = new Collection();
 
