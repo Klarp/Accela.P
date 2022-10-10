@@ -1,6 +1,10 @@
 // Copyright (C) 2022 Brody Jagoe
 
+<<<<<<< Updated upstream:commands/Utility/help.js
 const { MessageEmbed } = require('discord.js');
+=======
+const { EmbedBuilder, ChannelType } = require('discord.js');
+>>>>>>> Stashed changes:src/commands/Utility/help.js
 
 const Sentry = require('../../log');
 const { prefix } = require('../../config.json');
@@ -26,7 +30,7 @@ module.exports = {
 		let serverConfig;
 		let sprefix = prefix;
 
-		if (message.channel.type !== 'DM') {
+		if (message.channel.type === ChannelType.GuildText) {
 			serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
 		}
 
@@ -94,7 +98,7 @@ module.exports = {
 
 				return message.author.send({ embeds: [helpEmbed] })
 					.then(() => {
-						if (message.channel.type === 'DM') return;
+						if (message.channel.type === ChannelType.DM) return;
 						message.reply('I\'ve sent you a DM with the commands!');
 					})
 					.catch(error => {

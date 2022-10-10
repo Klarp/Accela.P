@@ -3,7 +3,7 @@
 const curl = require('curl');
 const osu = require('node-osu');
 
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, ChannelType } = require('discord.js');
 const { parser, diff, ppv2 } = require('ojsama');
 
 const { Client } = require('./index.js');
@@ -19,7 +19,7 @@ module.exports = {
 	 * @returns {boolean}
 	 */
 	checkPerm(user, perm, message) {
-		if (message.channel.type === 'DM') return true;
+		if (message.channel.type === ChannelType.DM) return true;
 		if (user.permissions.has(perm)) {
 			return true;
 		} else {

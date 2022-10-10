@@ -6,6 +6,7 @@ module.exports = {
 	description: 'Gets the avatar of the user',
 	module: 'Utility',
 	usage: '<user>',
+	cooldown: 60,
 	execute(message, args) {
 		if (args[0] === '-s') {
 			let menMember = message.mentions.members.first();
@@ -20,9 +21,15 @@ module.exports = {
 			if (!menMember && memberFlag) menMember = message.member;
 
 			if (menMember) {
+<<<<<<< Updated upstream:commands/Utility/avatar.js
 				message.channel.send(menMember.displayAvatarURL({ size:256, dynamic:true }));
 			} else {
 				message.channel.send(message.member.displayAvatarURL({ size:256, dynamic:true }));
+=======
+				message.channel.send(menMember.displayAvatarURL({ size: 2048, dynamic: true }));
+			} else {
+				message.channel.send(message.member.displayAvatarURL({ size: 2048, dynamic: true }));
+>>>>>>> Stashed changes:src/commands/Utility/avatar.js
 			}
 		} else {
 			let menUser = message.mentions.users.first();
@@ -35,9 +42,15 @@ module.exports = {
 			if (!menUser && userFlag) menUser = message.user;
 
 			if(menUser) {
+<<<<<<< Updated upstream:commands/Utility/avatar.js
 				message.channel.send(menUser.displayAvatarURL({ size:256, dynamic:true }));
 			} else {
 				message.channel.send(message.author.displayAvatarURL({ size:256, dynamic:true }));
+=======
+				message.channel.send(menUser.displayAvatarURL({ size: 2048, dynamic: true }));
+			} else {
+				message.channel.send(message.author.displayAvatarURL({ size: 2048, dynamic: true }));
+>>>>>>> Stashed changes:src/commands/Utility/avatar.js
 			}
 		}
 	},

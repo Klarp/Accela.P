@@ -5,7 +5,11 @@
 
 const osu = require('node-osu');
 
+<<<<<<< Updated upstream:commands/osu!/mania.js
 const { MessageEmbed } = require('discord.js');
+=======
+const { EmbedBuilder, ChannelType } = require('discord.js');
+>>>>>>> Stashed changes:src/commands/osu!/mania.js
 
 const Sentry = require('../../log');
 const { Client } = require('../../index');
@@ -48,7 +52,7 @@ module.exports = {
 		let id;
 		let verified = `:x: Not Verified [use ${prefix}verify]`;
 
-		if (message.channel.type !== 'DM') {
+		if (message.channel.type !== ChannelType.DM) {
 			const serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
 			if (serverConfig) {
 				prefix = serverConfig.get('prefix');

@@ -1,6 +1,10 @@
 // Copyright (C) 2022 Brody Jagoe
 
+<<<<<<< Updated upstream:commands/osu!/leaderboard.js
 const { MessageEmbed, Collection } = require('discord.js');
+=======
+const { EmbedBuilder, Collection, ChannelType } = require('discord.js');
+>>>>>>> Stashed changes:src/commands/osu!/leaderboard.js
 
 const { timeSince } = require('../../utils');
 const { upDate } = require('../../index');
@@ -25,7 +29,7 @@ module.exports = {
 		const modes = ['std', 'taiko', 'ctb', 'mania'];
 
 		let prefix = '>>';
-		if (message.channel.type !== 'DM') {
+		if (message.channel.type !== ChannelType.DM) {
 			const serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
 			if (serverConfig) {
 				prefix = serverConfig.get('prefix');
@@ -60,8 +64,13 @@ module.exports = {
 
 			table += getPos(posNumber, listArray, listUser, nameColumnWidth, rankColumnWidth);
 
+<<<<<<< Updated upstream:commands/osu!/leaderboard.js
 			const leaderEmbed = new MessageEmbed()
 				.addField(`${message.guild.name} Leaderboard (osu!${mode})`, `\`\`\`scala
+=======
+			const leaderEmbed = new EmbedBuilder()
+				.addField(`${message.guild.name} Discord Leaderboard (osu!${mode})`, `\`\`\`scala
+>>>>>>> Stashed changes:src/commands/osu!/leaderboard.js
 ${table}
 \`\`\``)
 				.setColor('#af152a')

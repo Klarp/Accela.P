@@ -3,7 +3,11 @@
 const axios = require('axios');
 const osu = require('node-osu');
 
+<<<<<<< Updated upstream:commands/osu!/verify.js
 const { MessageEmbed, Permissions } = require('discord.js');
+=======
+const { EmbedBuilder, PermissionsBitField, ChannelType } = require('discord.js');
+>>>>>>> Stashed changes:src/commands/osu!/verify.js
 
 const Sentry = require('../../log');
 const { getRankRole } = require('../../utils');
@@ -34,8 +38,13 @@ module.exports = {
 		if (args[0]) {
 
 			// DELETES MESSAGE IF USED IN GUILD
+<<<<<<< Updated upstream:commands/osu!/verify.js
 			if (message.channel.type !== 'DM') {
 				if (!message.guild.me.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) return message.channel.send('Please use this command inside my DMs! (codes are private and one time use)');
+=======
+			if (message.channel.type !== ChannelType.DM) {
+				if (!message.guild.members.me.permissions.has(PermissionsBitField.Flags.ManageMessages)) return message.channel.send('Please use another code inside my DMs! **The code is private and one time use!**');
+>>>>>>> Stashed changes:src/commands/osu!/verify.js
 				message.delete();
 				return message.reply('Please use another code inside my DMs');
 			}
@@ -218,8 +227,7 @@ Rank (osu!std): ${userStat.global_rank}`)
 						.setDescription('Please try again with a new code.');
 					message.channel.send({ embeds: [errorEmbed] });
 					logChannel.send(`:x: ${message.author} (ID: ${message.author.id}) failed to verify`);
-					Sentry.captureException(err);
-					console.log(err.response.status);
+					console.log(err.response.data);
 				});
 		}
 	},

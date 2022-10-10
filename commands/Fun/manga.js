@@ -1,6 +1,10 @@
 // Copyright (C) 2022 Brody Jagoe
 
+<<<<<<< Updated upstream:commands/Fun/manga.js
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+=======
+const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType } = require('discord.js');
+>>>>>>> Stashed changes:src/commands/Fun/manga.js
 const { nextPage, prevPage } = require('../../utils');
 
 const anilist_node = require('anilist-node');
@@ -16,6 +20,9 @@ module.exports = {
 	execute(message, args) {
 		const manga = args.join(' ');
 		let page = 0;
+		const mangaFilter = {
+			isAdult: false,
+		};
 
 		const row = new MessageActionRow()
 			.addComponents(
@@ -29,7 +36,7 @@ module.exports = {
 					.setStyle('SUCCESS'),
 			);
 
-		aniList.search('manga', manga).then(res => {
+		aniList.searchEntry.manga(manga, mangaFilter).then(res => {
 			const maxPage = res.media.length;
 			if (res.media[0]) {
 
@@ -101,14 +108,16 @@ module.exports = {
 ${longDesc}`)
 						.setFooter(`Page: ${page + 1}/${maxPage}`);
 					message.channel.send({ embeds: [aniEmbed], components: [row] }).then(msg => {
-						const collector = msg.createMessageComponentCollector({ componentType: 'BUTTON' });
+						const collector = msg.createMessageComponentCollector({ componentType: ComponentType.Button, time: 60000 });
 
 						collector.on('collect', button => {
 							if (button.user.id === message.author.id) {
 								if (button.customId === 'next') {
+									button.deferUpdate();
 									change = 'next';
 									page = nextPage(page, maxPage);
 								} else {
+									button.deferUpdate();
 									change = 'prev';
 									page = prevPage(page, maxPage);
 								}

@@ -2,7 +2,11 @@
 
 const osu = require('node-osu');
 
+<<<<<<< Updated upstream:commands/osu!/taiko.js
 const { MessageEmbed } = require('discord.js');
+=======
+const { EmbedBuilder, ChannelType } = require('discord.js');
+>>>>>>> Stashed changes:src/commands/osu!/taiko.js
 
 const Sentry = require('../../log');
 const { Client } = require('../../index');
@@ -38,7 +42,7 @@ module.exports = {
 		let name;
 		let verified = `:x: Not Verified [use ${prefix}verify]`;
 
-		if (message.channel.type !== 'DM') {
+		if (message.channel.type !== ChannelType.DM) {
 			const serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
 			if (serverConfig) {
 				prefix = serverConfig.get('prefix');
