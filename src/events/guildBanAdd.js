@@ -1,6 +1,6 @@
 // Copyright (C) 2022 Brody Jagoe
 
-const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField, AuditLogEvent } = require('discord.js');
 const { sleep } = require('../utils');
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
 
 		const fetchedLogs = await guild.fetchAuditLogs({
 			limit: 1,
-			type: 'MEMBER_BAN_ADD',
+			type: AuditLogEvent.MemberBanAdd,
 		});
 
 		const banLog = fetchedLogs.entries.first();

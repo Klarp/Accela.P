@@ -26,6 +26,9 @@ module.exports = {
 		await osuApi.getUser({ u: user }).then(u => {
 			osuID = u.id;
 			osuName = u.name;
+		}).catch(e => {
+			console.log(e);
+			Sentry.captureException(e);
 		});
 
 		try {
