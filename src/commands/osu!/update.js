@@ -40,7 +40,11 @@ module.exports = {
 		if (!option) {
 			const user = await Users.findOne({ where: { user_id: message.author.id } });
 
-			if (!user) return message.reply(`User is not verified! Use \`${prefix}verify\` to verify!`);
+			if (!user) {
+				return message.reply(`User is not verified! Use \`${prefix}verify\` to verify!`).then(msg => {
+					setTimeout(() => msg.delete, 5000);
+				});
+			}
 			if (user.verified_id && Client.users.cache.has(user.user_id)) {
 				const osuID = user.get('verified_id');
 				const userID = user.get('user_id');
@@ -216,7 +220,11 @@ osu!mania: ${mania_rank}`);
 			const user = await Users.findOne({ where: { user_id: findUser.id } });
 			console.log(user);
 
-			if (!user) return message.reply('User is not verified!');
+			if (!user) {
+				return message.reply('User is not verified!').then(msg => {
+					setTimeout(() => msg.delete(), 5000);
+				});
+			}
 			if (user.verified_id && Client.users.cache.has(user.user_id)) {
 				const osuID = user.get('verified_id');
 				const userID = user.get('user_id');
@@ -267,7 +275,7 @@ osu!mania: ${mania_rank}`);
 						const osuMember = osuGame.members.cache.get(userID);
 						if (osuMember) {
 							getRankRole(osuMember, rank, mode);
-							logChannel.send(`**Updating ${message.author}**`);
+							logChannel.send(`**Force Updating ${findUser}**`);
 						}
 					}
 
@@ -282,7 +290,7 @@ osu!mania: ${mania_rank}`);
 
 					const updateEmbed = new EmbedBuilder()
 						.setTitle('Verification Update')
-						.setAuthor({ name: message.author.tag })
+						.setAuthor({ name: findUser.tag })
 						.setColor('#af152a')
 						.setDescription(`Mode: ${osuMode}
 osu!std: ${std_rank}
