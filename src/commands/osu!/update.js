@@ -210,6 +210,7 @@ osu!mania: ${mania_rank}`);
 				q.push(storedUsers[i]);
 			}
 		} else if (option === 'user') {
+			if (!owners.includes(message.author.id)) return;
 			let findUser;
 			if (message.mentions.users.first()) {
 				findUser = message.mentions.users.first();
