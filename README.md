@@ -23,9 +23,19 @@ To use Accela create a config.json inside the file directory with the following 
 	"owners": ["Owner ID, Co-Owner ID"],
 	"servers": ["Private Server ID", "Other Server ID"]
 
-	"osu_key": "Your_Key",
-	"osu_key_v2": "Your_Key"
+	"osu_key": "Your_Api1_Key",
+	"osu_key_v2": "Your_Api2_Key"
 }
+```
+
+## Running Accela
+
+Run in the src folder
+
+```
+> node Accela.P
+Altnernative: 
+> nodemon Accela.P
 ```
 
 ## Contributing
