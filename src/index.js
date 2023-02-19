@@ -26,6 +26,7 @@ const path = require('node:path');
 const Sentry = require('../log');
 const { token } = require('../config.json');
 
+
 const client = new Client({ intents: [
 	GatewayIntentBits.MessageContent,
 	GatewayIntentBits.Guilds,
@@ -47,7 +48,7 @@ client.on('error', error => {
 	console.error();
 });
 
-// START EVENT LOADING
+// EVENT LOADING
 
 const eventPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventPath).filter(file => file.endsWith('.js'));
@@ -63,7 +64,7 @@ for (const file of eventFiles) {
 	}
 }
 
-// START COMMAND LOADING
+// COMMAND LOADING
 
 modules.forEach(c => {
 	fs.readdir(`./commands/${c}`, (err, files) => {
@@ -86,6 +87,5 @@ process.on('unhandledRejection', error => {
 	console.error(`Unhandled promise rejection: ${error}`);
 	Sentry.captureException(error);
 });
-
 
 client.login(token);
