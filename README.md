@@ -28,6 +28,18 @@ To use Accela create a config.json inside the file directory with the following 
 }
 ```
 
+## Building databases
+
+Run in the database folder
+
+```
+Options:
+--force or -f: Forces update of database (will remove all users)
+--osu or -o: Skips over the osu user database (useful when forcing)
+
+node dbInit.js
+```
+
 ## Running Accela
 
 Run in the src folder
