@@ -93,7 +93,7 @@ module.exports = {
 
 					const aniEmbed = new EmbedBuilder()
 						.setAuthor({ name: 'AniList [UNOFFICIAL]', iconURL: 'https://anilist.co/img/icons/android-chrome-512x512.png' })
-						.setColor('BLUE')
+						.setColor(0x0000FF)
 						.setTitle(`${aniRes.title.romaji} [${aniRes.title.native}]`)
 						.setURL(aniRes.siteUrl)
 						.setThumbnail(aniRes.coverImage.large)
@@ -183,7 +183,7 @@ ${longDesc}`)
 
 								const aniEmbedEdit = new EmbedBuilder()
 									.setAuthor({ name: 'AniList [UNOFFICIAL]', iconURL: 'https://anilist.co/img/icons/android-chrome-512x512.png' })
-									.setColor('BLUE')
+									.setColor(0x0000FF)
 									.setTitle(`${aniResEdit.title.romaji} [${aniResEdit.title.native}]`)
 									.setURL(aniResEdit.siteUrl)
 									.setThumbnail(aniResEdit.coverImage.large)
