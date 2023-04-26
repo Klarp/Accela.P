@@ -1,5 +1,4 @@
 // Copyright (C) 2022 Brody Jagoe
-const qrate = require('qrate');
 const osu = require('node-osu');
 
 const { EmbedBuilder, ChannelType } = require('discord.js');
@@ -19,7 +18,6 @@ module.exports = {
 		const option = args[0];
 		const osuApi = new osu.Api(osu_key);
 		const storedUsers = await Users.findAll();
-		const startDate = Date.now();
 		let prefix = '>>';
 		let serverConfig;
 		if (message.channel.type !== ChannelType.DM) {
@@ -123,91 +121,6 @@ osu!mania: ${mania_rank}`);
 					Sentry.captureException(err);
 					console.error(err);
 				}
-			}
-		} else if (option === 'all') {
-			let ownerCheck;
-			owners.forEach(owner => {
-				if (owner === message.author.id) ownerCheck = true;
-			});
-			if (!ownerCheck) return;
-
-			logChannel.send(`**Started processing of ${storedUsers.length} members**`);
-
-			const worker = async (u) => {
-				logChannel.send(`Updating ${u.osu_name} with osu! ID: ${u.verified_id}`);
-				const osuID = u.get('verified_id');
-				const userID = u.get('user_id');
-				const mode = u.get('osu_mode');
-				let std_rank = null;
-				let taiko_rank = null;
-				let ctb_rank = null;
-				let mania_rank = null;
-				// std
-				await osuApi.getUser({ u: osuID, m: 0 }).then(osuUser => {
-					std_rank = osuUser.pp.rank;
-					if (std_rank === '0') std_rank = null;
-					console.log(`Updating ${u.osu_name} std rank to ${std_rank}`);
-				});
-				// Taiko
-				await osuApi.getUser({ u: osuID, m: 1 }).then(osuUser => {
-					taiko_rank = osuUser.pp.rank;
-					if (taiko_rank === '0') taiko_rank = null;
-					console.log(`Updating ${u.osu_name} std rank to ${taiko_rank}`);
-				});
-				// ctb
-				await osuApi.getUser({ u: osuID, m: 2 }).then(osuUser => {
-					ctb_rank = osuUser.pp.rank;
-					if (ctb_rank === '0') ctb_rank = null;
-					console.log(`Updating ${u.osu_name} std rank to ${ctb_rank}`);
-				});
-				// Mania
-				await osuApi.getUser({ u: osuID, m: 3 }).then(osuUser => {
-					mania_rank = osuUser.pp.rank;
-					if (mania_rank === '0') mania_rank = null;
-					console.log(`Updating ${u.osu_name} std rank to ${mania_rank}`);
-				});
-
-				try {
-					console.log('Starting rank role update');
-					const upUser = await Users.update({
-						std_rank: std_rank,
-						taiko_rank: taiko_rank,
-						ctb_rank: ctb_rank,
-						mania_rank: mania_rank,
-					},
-					{
-						where: { user_id: userID },
-					});
-					if (upUser > 0) {
-						console.log('Adding/updating rank roles');
-						let rank;
-						if (mode === 0 && std_rank !== null) rank = std_rank;
-						if (mode === 1 && taiko_rank !== null) rank = taiko_rank;
-						if (mode === 2 && ctb_rank !== null) rank = ctb_rank;
-						if (mode === 3 && mania_rank !== null) rank = mania_rank;
-						const osuMember = osuGame.members.cache.get(userID);
-						if (osuMember) {
-							console.log(osuMember);
-							getRankRole(osuMember, rank, mode);
-						}
-					}
-				} catch (err) {
-					console.error(err);
-					Sentry.captureException(err);
-				}
-			};
-
-			const q = qrate(worker, 1, 0.5);
-
-			q.drain = () => {
-				const lbDate = Date.now();
-				let finishDate = lbDate - startDate;
-				finishDate = finishDate / 60000;
-				logChannel.send(`**Finished force updating ${storedUsers.length} members in ${finishDate.toFixed(2)} minutes**`);
-			};
-
-			for (let i = 0; i < storedUsers.length; i++) {
-				q.push(storedUsers[i]);
 			}
 		} else if (option === 'user') {
 			if (!owners.includes(message.author.id)) return;
