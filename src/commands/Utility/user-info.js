@@ -61,42 +61,29 @@ module.exports = {
 			.map(r => `${r}`).join(' | ');
 		const name = member.nickname || 'None';
 
-		let game = 'None';
-		let gameState = '';
+		const activities = member.presence.activities;
 		let customStatus = 'None';
+		let customStatusEmoji = '';
+		let game = '';
+		let gameStatus = '';
+		let playing = '';
+
 		if (member.presence.activities[0]) {
-			if (member.presence.activities[0].type === 'CUSTOM') {
-				customStatus = member.presence.activities[0].state;
-				if (customStatus === null) customStatus = 'None';
-				if (member.presence.activities[1]) {
-					game = member.presence.activities[1].name;
-					if (game === null) game = 'None';
-					if (member.presence.activities[1].state) {
-						gameState = member.presence.activities[1].state;
-						if (gameState === null) gameState = '';
-					}
-					if (member.presence.activities[1].details) {
-						gameState = `(${member.presence.activities[1].details})`;
-					}
-					if (member.presence.activities[1].name === 'Spotify') {
-						gameState = `(${member.presence.activities[1].state} - ${member.presence.activities[1].details})`;
-					}
+			if (activities[0].name === 'Custom Status') {
+				customStatus = activities[0].state ? activities[0].state : '';
+				customStatusEmoji = activities[0].emoji ? activities[0].emoji : '';
+
+				if (activities[1]) {
+					game = activities[1].name;
+					gameStatus = activities[1].details;
 				}
 			} else {
-				game = member.presence.activities[0].name;
-				if (game === null) game = 'None';
-				if (member.presence.activities[0].state) {
-					gameState = `(${member.presence.activities[0].state})`;
-					if (gameState === null) gameState = '';
-				}
-				if (member.presence.activities[0].details) {
-					gameState = `(${member.presence.activities[0].details})`;
-				}
-				if (member.presence.activities[0].name === 'Spotify') {
-					gameState = `(${member.presence.activities[0].state} - ${member.presence.activities[0].details})`;
-				}
+				game = activities[0].name;
+				gameStatus = activities[0].details;
 			}
 		}
+
+		playing = `**Playing:** ${game} (${gameStatus})`;
 
 		const infoEmbed = new EmbedBuilder()
 			.setTitle(`${statusEmoji} ${target.tag} (${target.id})`)
@@ -104,8 +91,8 @@ module.exports = {
 			.setColor('BLUE')
 			.setDescription(`**Nickname:** ${name} 
 **Status:** ${status}
-**Custom Status:** ${customStatus}
-**Playing:** ${game} ${gameState}
+**Custom Status:** ${customStatusEmoji} ${customStatus}
+${playing}
 			
 **Joined Server:** ${joinSince} \`${jday} ${jmonth} ${jyear} ${joinTime}\`
 			

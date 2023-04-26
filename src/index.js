@@ -29,7 +29,7 @@ const { token } = require('../config.json');
 const client = new Client({ intents: [
 	GatewayIntentBits.MessageContent,
 	GatewayIntentBits.Guilds,
-	GatewayIntentBits.GuildBans,
+	GatewayIntentBits.GuildModeration,
 	GatewayIntentBits.GuildPresences,
 	GatewayIntentBits.GuildMessages,
 	GatewayIntentBits.DirectMessages,

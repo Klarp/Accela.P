@@ -25,14 +25,15 @@ module.exports = {
 
 		const mentionTest = message.content.split(' ');
 
+		// Needs fixing
 		if (mentionTest[0] === `<@!${Client.user.id}>` && !mentionTest[1]) {
 			message.channel.send(`Hello, my current prefix is: \`${prefix}\` if you need help use \`${prefix}help\` for more information.`);
 		}
 
 		if (!message.content.startsWith(prefix)) return;
 
-		// For beta testing
 		/*
+		// For beta testing
 		if (message.channel.type === ChannelType.GuildText) {
 			if (message.channel.guild.id === '98226572468690944') return;
 		}
