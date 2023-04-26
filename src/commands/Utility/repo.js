@@ -7,7 +7,7 @@ module.exports = {
 	description: 'Posts the github repository',
 	module: 'Utility',
 	execute(message) {
-		const repoEmbed = new EmbedBuilder().setTitle('GitHub Repository').addFields([ { name: 'repo', value: 'https://github.com/Klarp/Accela.P' } ]).setColor('#2F3136');
+		const repoEmbed = new EmbedBuilder().setTitle('GitHub Repository').addFields([ { name: 'repo', value: 'https://github.com/Klarp/Accela.P' } ]).setColor(0x2F3136);
 		message.channel.send({ embeds: [repoEmbed] });
 	},
 };

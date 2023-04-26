@@ -33,7 +33,7 @@ module.exports = {
 			if (!banLog) {
 				const banEmbed = new EmbedBuilder()
 					.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-					.setColor('#EA4D4B')
+					.setColor(0xEA4D4B)
 					.setTitle(`Banned ${user.tag}`)
 					.setDescription(`:lock: ${user}
 
@@ -48,7 +48,7 @@ module.exports = {
 				if (target.id === user.id && reason) {
 					const banEmbed = new EmbedBuilder()
 						.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-						.setColor('#EA4D4B')
+						.setColor(0xEA4D4B)
 						.setTitle(`Banned ${user.tag}`)
 						.setDescription(`:lock: ${user}
 					
@@ -63,7 +63,7 @@ module.exports = {
 				} else if(target.id === user.id && !reason) {
 					const banEmbed = new EmbedBuilder()
 						.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-						.setColor('#EA4D4B')
+						.setColor(0xEA4D4B)
 						.setTitle(`Banned ${user.tag}`)
 						.setDescription(`:lock: ${user}
 
@@ -78,7 +78,7 @@ module.exports = {
 				} else {
 					const banEmbed = new EmbedBuilder()
 						.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-						.setColor('#EA4D4B')
+						.setColor(0xEA4D4B)
 						.setTitle(`Banned ${user.tag}`)
 						.setDescription(`:lock: ${user}
 

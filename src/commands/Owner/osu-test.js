@@ -37,7 +37,7 @@ module.exports = {
 		const searchEmbed = new EmbedBuilder()
 			.setAuthor({ name: `${menUser.user.tag} (${menUser.id})` })
 			.setTitle(`${menUser.displayName}'s Info`)
-			.setColor('0xff69b4')
+			.setColor(0xff69b4)
 			.setDescription(`Current Mode: ${mode}
 osu!std: ${std_rank}
 osu!taiko: ${taiko_rank}

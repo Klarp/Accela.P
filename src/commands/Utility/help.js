@@ -90,7 +90,7 @@ module.exports = {
 				const text = data.join('\n');
 
 				const helpEmbed = new EmbedBuilder()
-					.setColor('BLUE')
+					.setColor(0x0000FF)
 					.setDescription(text);
 
 				return message.author.send({ embeds: [helpEmbed] })

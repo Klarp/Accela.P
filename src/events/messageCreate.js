@@ -135,7 +135,7 @@ module.exports = {
 			// Creation of error embed
 			const errorEmbed = new EmbedBuilder()
 				.setTitle('An Error Has Occurred')
-				.setColor('#FF0000')
+				.setColor(0xFF0000)
 				.setDescription(`OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!
 			
 Please do not contact @Klarp#0001 if you see this message`);

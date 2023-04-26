@@ -109,7 +109,7 @@ module.exports = {
 					const updateEmbed = new EmbedBuilder()
 						.setTitle('Verification Update')
 						.setAuthor({ name: message.author.tag })
-						.setColor('#af152a')
+						.setColor(0xaf152a)
 						.setDescription(`Mode: ${osuMode}
 osu!std: ${std_rank}
 osu!taiko: ${taiko_rank}
@@ -205,7 +205,7 @@ osu!mania: ${mania_rank}`);
 					const updateEmbed = new EmbedBuilder()
 						.setTitle('Verification Update')
 						.setAuthor({ name: findUser.tag })
-						.setColor('#af152a')
+						.setColor(0xaf152a)
 						.setDescription(`Mode: ${osuMode}
 osu!std: ${std_rank}
 osu!taiko: ${taiko_rank}

@@ -141,7 +141,7 @@ module.exports = {
 			// Create the embed
 			const osuEmbed = new EmbedBuilder()
 				.setAuthor({ name: `${user.name || name}`, iconURL: `http://a.ppy.sh/${user.id}`, url: `https://osu.ppy.sh/u/${user.id}` })
-				.setColor('#af152a')
+				.setColor(0xaf152a)
 				.setTitle(`Information On ${user.name}`)
 				.setURL(`https://osu.ppy.sh/u/${user.id}`)
 				.setThumbnail(`http://a.ppy.sh/${user.id}`)

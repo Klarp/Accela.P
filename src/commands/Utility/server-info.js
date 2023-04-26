@@ -49,7 +49,7 @@ module.exports = {
 		const infoEmbed = new EmbedBuilder()
 			.setAuthor({ name: server.name, iconURL: server.iconURL({ dynamic: true }) })
 			.setThumbnail(server.bannerURL())
-			.setColor('BLUE')
+			.setColor(0x0000FF)
 			.setDescription(`**Owner:** ${owner.user.tag} (${server.ownerId})
 
 **Members:** ${server.memberCount} | **Vanity URL:** ${vanity}

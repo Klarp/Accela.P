@@ -64,7 +64,7 @@ module.exports = {
 				.addField(`${message.guild.name} Discord Leaderboard (osu!${mode})`, `\`\`\`scala
 ${table}
 \`\`\``)
-				.setColor('#af152a')
+				.setColor(0xaf152a)
 				.setFooter(`Last Updated ${timeSince(newDate)} • ${prefix}lb [mode] for other gamemodes`);
 
 			message.channel.send({ embeds: [leaderEmbed] });
@@ -106,7 +106,7 @@ ${table}
 				.addField(`${message.guild.name} Discord Leaderboard (osu!${mode})`, `\`\`\`scala
 ${table}
 \`\`\``)
-				.setColor('#af152a')
+				.setColor(0xaf152a)
 				.setFooter(`Last Updated ${timeSince(newDate)}`);
 
 			message.channel.send({ embeds: [leaderEmbed] });

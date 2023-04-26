@@ -61,7 +61,7 @@ module.exports = {
 
 		const infoEmbed = new EmbedBuilder()
 			.setAuthor({ name: bot.username, iconURL: bot.displayAvatarURL() })
-			.setColor('BLUE')
+			.setColor(0x0000FF)
 			.setDescription(`**Prefix:** ${prefix}
 **Help Command:** ${prefix}help
 **Total Servers:** ${Client.guilds.cache.size} (${userCount} users)

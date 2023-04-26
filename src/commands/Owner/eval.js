@@ -26,16 +26,16 @@ module.exports = {
 				.addFields({ name:'Result', value: code('js', res) });
 
 			if (!res || (!evald && evald !== 0)) {
-				evalEmbed.setColor('#ff0000');
+				evalEmbed.setColor(0xff0000);
 			} else {
 				evalEmbed
 					.addFields({ name: 'Type', value: code('css', typeof evald) })
-					.setColor('#00FF00');
+					.setColor(0x00FF00);
 			}
 		} catch (error) {
 			evalEmbed
 				.addFields({ name: 'Error', value: code('js', error) })
-				.setColor('#ff0000');
+				.setColor(0xff0000);
 		} finally {
 			channel.send({ embeds: [evalEmbed] }).catch(error => {
 				channel.send(`Error: ${error.message}`);

@@ -96,7 +96,7 @@ module.exports = {
 
 							const userEmbed = new EmbedBuilder()
 								.setTitle(':white_check_mark: Verfication Accepted!')
-								.setColor('#af152a')
+								.setColor(0xaf152a)
 								.setDescription(`User: ${user.username}
 Rank (osu!std): ${userStat.global_rank}`)
 								.setFooter({ text: `ID: ${user.id} | Use >>mode to change game modes` });
@@ -218,7 +218,7 @@ Rank (osu!std): ${userStat.global_rank}`)
 					const logChannel = osuGame.channels.cache.get('776522946872344586');
 					const errorEmbed = new EmbedBuilder()
 						.setTitle(':x: Error: Could Not Verify!')
-						.setColor('#ff0000')
+						.setColor(0xff0000)
 						.setDescription('Please try again with a new code.');
 					message.channel.send({ embeds: [errorEmbed] });
 					logChannel.send(`:x: ${message.author} (ID: ${message.author.id}) failed to verify`);

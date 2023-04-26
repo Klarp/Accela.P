@@ -35,7 +35,7 @@ module.exports = {
 		const noVerifyEmbed = new EmbedBuilder()
 			.setTitle('Please Verify Your osu! Account!')
 			.setDescription('https://accela.xyz/verify.html')
-			.setColor('#af152a');
+			.setColor(0xaf152a);
 
 		const user = await Users.findOne({ where: { user_id: message.author.id } });
 
@@ -46,7 +46,7 @@ module.exports = {
 		if (!args[0]) {
 			const modeEmbed = new EmbedBuilder()
 				.setTitle('Which mode would you like?')
-				.setColor('#af152a')
+				.setColor(0xaf152a)
 				.setDescription(`**std (Standard)**
 **mania**
 **taiko**

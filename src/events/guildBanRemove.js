@@ -23,7 +23,7 @@ module.exports = {
 			if (!unBanLog) {
 				const unbanEmbed = new EmbedBuilder()
 					.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-					.setColor('#4BB580')
+					.setColor(0x4BB580)
 					.setTitle(`Unbanned ${user.tag}`)
 					.setDescription(`:unlock: ${user}`)
 					.setFooter({ text: `ID: ${user.id}` })
@@ -37,7 +37,7 @@ module.exports = {
 				if (target.id === user.id) {
 					const unbanEmbed = new EmbedBuilder()
 						.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-						.setColor('#4BB580')
+						.setColor(0x4BB580)
 						.setTitle(`Unbanned ${user.tag}`)
 						.setDescription(`:unlock: ${user}
 
@@ -49,7 +49,7 @@ module.exports = {
 				} else {
 					const unbanEmbed = new EmbedBuilder()
 						.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-						.setColor('#4BB580')
+						.setColor(0x4BB580)
 						.setTitle(`Unbanned ${user.tag}`)
 						.setDescription(`:unlock: ${user}`)
 						.setFooter({ text: `ID: ${user.id}` })
