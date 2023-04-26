@@ -83,7 +83,11 @@ module.exports = {
 			}
 		}
 
-		playing = `**Playing:** ${game} (${gameStatus})`;
+		if (gameStatus === null) gameStatus = '';
+		if (gameStatus) gameStatus = `(${gameStatus})`;
+		if (!game) game = 'Nothing';
+
+		playing = `**Playing:** ${game} ${gameStatus}`;
 
 		const infoEmbed = new EmbedBuilder()
 			.setTitle(`${statusEmoji} ${target.tag} (${target.id})`)
