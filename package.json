@@ -11,7 +11,7 @@
   "author": "Karp",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@discordjs/rest": "^1.6.0",
+    "@discordjs/rest": "^1.7.1",
     "@mapbox/node-pre-gyp": "^1.0.7",
     "@sentry/browser": "^7.44.1",
     "@sentry/node": "^7.44.1",
