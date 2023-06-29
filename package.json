@@ -13,7 +13,7 @@
   "dependencies": {
     "@discordjs/rest": "^1.6.0",
     "@mapbox/node-pre-gyp": "^1.0.7",
-    "@sentry/browser": "^7.44.1",
+    "@sentry/browser": "^7.54.0",
     "@sentry/node": "^7.44.1",
     "@sentry/tracing": "^7.44.1",
     "anilist-node": "^1.11.0",
