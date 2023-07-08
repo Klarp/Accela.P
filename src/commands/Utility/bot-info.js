@@ -1,9 +1,10 @@
-// Copyright (C) 2022 Brody Jagoe
+// Copyright (C) 2023 Brody Jagoe
 
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { Client } = require('../../index');
 const { sConfig } = require('../../../database/dbObjects');
 const { version } = require('../../../package.json');
+const discordjs = require('../../../node_modules/discord.js/package.json');
 
 module.exports = {
 	name: 'bot-info',
@@ -23,6 +24,7 @@ module.exports = {
 			.sort((a, b) => b.position - a.position)
 			.map(r => `${r}`).join(' | ');
 		let userCount = 0;
+		const discordjsVersion = discordjs.version;
 
 		Client.guilds.cache
 			.each(guild => userCount += guild.memberCount);
@@ -69,7 +71,7 @@ module.exports = {
 **Uptime:** ${uptime}
 			
 **Roles:** ${roles}`)
-			.setFooter({ text: `Created by: Klarp#0001 | Version: ${version} | Framework: discord.js v14.0.1` });
+			.setFooter({ text: `Created by: Klarp#0001 | Version: ${version} | Framework: discord.js ${discordjsVersion}` });
 		message.channel.send({ embeds: [infoEmbed], components: [binfoButtons] });
 	},
 };

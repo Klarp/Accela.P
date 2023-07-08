@@ -1,7 +1,6 @@
-// Copyright (C) 2022 Brody Jagoe
+// Copyright (C) 2023 Brody Jagoe
 
-const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType } = require('discord.js');
-const { nextPage, prevPage } = require('../../utils');
+const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder } = require('discord.js');
 
 const anilist_node = require('anilist-node');
 const aniList = new anilist_node();
@@ -15,211 +14,130 @@ module.exports = {
 	args: true,
 	usage: '[anime]',
 	execute(message, args) {
-		const anime = args.join(' ');
-		let page = 0;
+		const animeName = args.join(' ');
 		const animeFilter = {
 			isAdult: false,
 		};
 
-		aniList.searchEntry.anime(anime, animeFilter).then(res => {
-			const maxPage = res.media.length;
-			if (res.media[0]) {
-				// Create Buttons
-				const row = new ActionRowBuilder()
+		const toTitleCase = str => {
+			return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+		};
+
+		function formatDate(year, month, day) {
+			const date = new Date(year, month - 1, day);
+			const formattedDate = date.toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+			return formattedDate;
+		}
+
+		aniList.searchEntry.anime(animeName, animeFilter, 1, 5).then(animeData => {
+			if (animeData.media.length === 0) {
+				return message.reply('No results found');
+			}
+
+			aniList.media.anime(animeData.media[0].id).then(anime => {
+				let englishTitle = anime.title.english ? anime.title.english : '';
+				let romajiTitle = anime.title.romaji ? anime.title.romaji : '';
+				let nativeTitle = anime.title.native ? anime.title.native : '';
+				let status = anime.status ? toTitleCase(anime.status) : 'Unknown';
+				let format = anime.format ? anime.format : 'Unknown';
+				let episodes = anime.episodes ? anime.episodes : 'Unknown';
+				let studioNames = anime.studios.map(studio => studio.isAnimationStudio ? `[${studio.name}](https://anilist.co/studio/${studio.id})` : '').filter(studio => studio !== '').join(', ');
+				let avgScore = anime.averageScore ? `${anime.averageScore}%` : 'Unknown';
+				let genres = anime.genres.length > 0 ? anime.genres.join(' | ') : 'Unknown';
+				let startDate = anime.startDate.day && anime.startDate.month && anime.startDate.year ? formatDate(anime.startDate.year, anime.startDate.month, anime.startDate.day) : 'Unknown';
+				let endDate = anime.endDate.day && anime.endDate.month && anime.endDate.year ? formatDate(anime.endDate.year, anime.endDate.month, anime.endDate.day) : 'Unknown';
+				let description = anime.description ? anime.description.replace(/<[^>]*>/g, '').replace(/\n/g, ' ').replace(/\s+/g, ' ').substring(0, 300) + '...' : 'No description available';
+
+				let animeEmbed = new EmbedBuilder()
+					.setAuthor({ name: 'AniList [Unoffical]', url: 'https://anilist.co', iconURL: 'https://anilist.co/img/icons/android-chrome-512x512.png' })
+					.setColor('#02A9FF')
+					.setTitle(`${romajiTitle} [${nativeTitle}]`)
+					.setURL(anime.siteUrl)
+					.setThumbnail(anime.coverImage.large)
+					.setDescription(`${englishTitle}
+		
+**Status:** ${status} | **Format:** ${format} | **Episodes:** ${episodes}
+**Studio:** ${studioNames} | **Average Score:** ${avgScore}
+**Genres:** ${genres}
+		
+**Start Date:** ${startDate}
+**End Date:** ${endDate}
+		
+**Description**
+${description}`);
+				const animeMenu = [];
+				for (let i = 0; i < animeData.media.length; i++) {
+					const menu = new StringSelectMenuOptionBuilder()
+						.setLabel(animeData.media[i].title.romaji)
+						.setValue(`page_${i + 1}`)
+						.setDescription(animeData.media[i].title.english ? animeData.media[i].title.english : animeData.media[i].title.native);
+					animeMenu.push(menu);
+				}
+
+				const animeMenuRow = new ActionRowBuilder()
 					.addComponents(
-						new ButtonBuilder()
-							.setCustomId('prev')
-							.setLabel('Prev')
-							.setStyle(ButtonStyle.Danger),
-						new ButtonBuilder()
-							.setCustomId('next')
-							.setLabel('Next')
-							.setStyle(ButtonStyle.Success),
+						new StringSelectMenuBuilder()
+							.setCustomId('anime_menu')
+							.setPlaceholder('More Results')
+							.addOptions(animeMenu),
 					);
 
-				let status;
-				let type;
-				let episodes;
-				let studio;
-				let avgScore;
-				let genres;
-				let startDate;
-				let endDate;
-				let longDesc;
-				let change;
+				message.reply({ embeds: [animeEmbed], components: [animeMenuRow] }).then(msg => {
+					const filter = i => i.customId === 'anime_menu' && i.user.id === message.author.id;
+					const collector = msg.createMessageComponentCollector({ filter, time: 60000 });
 
-				aniList.media.anime(res.media[0].id).then(aniRes => {
-					function truncate(str, n) {
-						return (str.length > n) ? str.substr(0, n - 1) + '...' : str;
-					}
+					collector.on('collect', async i => {
+						if (i.customId === 'anime_menu') {
+							const page = parseInt(i.values[0].split('_')[1]) - 1;
+							const animeSelected = animeData.media[page];
 
-					if (page === 0) {
-						if (aniRes.isAdult) return message.reply('NSFW searches are not allowed!');
-					}
+							aniList.media.anime(animeSelected.id).then(async newAnime => {
+								englishTitle = newAnime.title.english ? newAnime.title.english : '';
+								romajiTitle = newAnime.title.romaji ? newAnime.title.romaji : '';
+								nativeTitle = newAnime.title.native ? newAnime.title.native : '';
+								status = newAnime.status ? toTitleCase(newAnime.status) : 'Unknown';
+								format = newAnime.format ? newAnime.format : 'Unknown';
+								episodes = newAnime.episodes ? newAnime.episodes : 'Unknown';
+								studioNames = newAnime.studios.map(studio => studio.isAnimationStudio ? `[${studio.name}](https://anilist.co/studio/${studio.id})` : '').filter(studio => studio !== '').join(', ');
+								avgScore = newAnime.averageScore ? `${newAnime.averageScore}%` : 'Unknown';
+								genres = newAnime.genres.length > 0 ? newAnime.genres.join(' | ') : 'Unknown';
+								startDate = newAnime.startDate.day && newAnime.startDate.month && newAnime.startDate.year ? formatDate(newAnime.startDate.year, newAnime.startDate.month, newAnime.startDate.day) : 'Unknown';
+								endDate = newAnime.endDate.day && newAnime.endDate.month && newAnime.endDate.year ? formatDate(newAnime.endDate.year, newAnime.endDate.month, newAnime.endDate.day) : 'Unknown';
+								description = newAnime.description ? newAnime.description.replace(/<[^>]*>/g, '').replace(/\n/g, ' ').replace(/\s+/g, ' ').substring(0, 300) + '...' : 'No description available';
 
-					status = getStatus(aniRes.status);
-					type = aniRes.format || 'Unknown';
-					episodes = aniRes.episodes || 'Unknown';
-					if (aniRes.studios[0]) {
-						studio = aniRes.studios[0].name || 'Unknown';
-					} else {
-						studio = 'Unknown';
-					}
-					avgScore = aniRes.averageScore || '0';
-					genres = aniRes.genres.join(' | ');
+								animeEmbed = new EmbedBuilder()
+									.setAuthor({ name: 'AniList [Unoffical]', url: 'https://anilist.co', iconURL: 'https://anilist.co/img/icons/android-chrome-512x512.png' })
+									.setColor('#02A9FF')
+									.setTitle(`${romajiTitle} [${nativeTitle}]`)
+									.setURL(newAnime.siteUrl)
+									.setThumbnail(newAnime.coverImage.large)
+									.setDescription(`${englishTitle}
 
-					startDate = `${aniRes.startDate.year}-${aniRes.startDate.month}-${aniRes.startDate.day}`;
-					endDate = `${aniRes.endDate.year}-${aniRes.endDate.month}-${aniRes.endDate.day}`;
+								**Status:** ${status} | **Format:** ${format} | **Episodes:** ${episodes}
+									**Studio:** ${studioNames} | **Average Score:** ${avgScore}
+									**Genres:** ${genres}
 
-					longDesc = 'No description found';
+									**Start Date:** ${startDate}
+									**End Date:** ${endDate}
 
-					if (aniRes.description) {
-						longDesc = aniRes.description.replace(/<\/?[^>]+(>|$)/g, '').replace(/&lsquo;/g, '').replace(/\n/g, '');
-					}
+									**Description**
+									${description}`);
 
-					if (aniRes.startDate.year === null) {
-						startDate = 'Unknown';
-					}
-
-					if (aniRes.startDate.year & !aniRes.startDate.day || !aniRes.startDate.month) {
-						startDate = aniRes.startDate.year;
-					}
-
-					if (aniRes.endDate.year === null) {
-						endDate = 'Unknown';
-					}
-
-					longDesc = truncate(longDesc, 300);
-
-					const aniEmbed = new EmbedBuilder()
-						.setAuthor({ name: 'AniList [UNOFFICIAL]', iconURL: 'https://anilist.co/img/icons/android-chrome-512x512.png' })
-						.setColor(0x0000FF)
-						.setTitle(`${aniRes.title.romaji} [${aniRes.title.native}]`)
-						.setURL(aniRes.siteUrl)
-						.setThumbnail(aniRes.coverImage.large)
-						.setDescription(`${aniRes.title.english ? aniRes.title.english : ''}
-
-**Status** ${status} | **Type** ${type} | **Episodes** ${episodes}
-**Studio** ${studio} | **Average Score** ${avgScore}%
-**Genres** ${genres}
-					
-**Start Date** ${startDate}
-**End Date** ${endDate}
-					
-**Description**
-${longDesc}`)
-						.setFooter({ text: `Page: ${page + 1}/${maxPage}` });
-
-					message.channel.send({ embeds: [aniEmbed], components: [row] }).then(msg => {
-						const collector = msg.createMessageComponentCollector({ componentType: ComponentType.Button, time: 60000 });
-
-						collector.on('collect', async button => {
-							if (button.user.id === message.author.id) {
-								if (button.customId === 'next') {
-									await button.deferUpdate();
-									change = 'next';
-									page = nextPage(page, maxPage);
-								} else {
-									await button.deferUpdate();
-									change = 'prev';
-									page = prevPage(page, maxPage);
-								}
-
-								pageSwitch();
-							} else {
-								button.reply({ content: 'Only the message author can switch pages!', ephemeral: true });
-							}
-						});
-
-						function pageSwitch() {
-							aniList.media.anime(res.media[page].id).then(aniResEdit => {
-
-								if (aniResEdit.isAdult === true) {
-									if (change === 'next') {
-										page = nextPage(page, maxPage);
-										return pageSwitch();
-									}
-									if (change === 'prev') {
-										page = prevPage(page, maxPage);
-										return pageSwitch();
-									}
-								}
-
-								status = getStatus(aniResEdit.status);
-								type = aniResEdit.format || 'Unknown';
-								episodes = aniResEdit.episodes || 'Unknown';
-
-								if (aniResEdit.studios[0]) {
-									studio = aniResEdit.studios[0].name || 'Unknown';
-								} else {
-									studio = 'Unknown';
-								}
-
-								avgScore = aniResEdit.averageScore || '0';
-								genres = aniResEdit.genres.join(' | ');
-
-								startDate = `${aniResEdit.startDate.year}-${aniResEdit.startDate.month}-${aniResEdit.startDate.day}`;
-								endDate = `${aniResEdit.endDate.year}-${aniResEdit.endDate.month}-${aniResEdit.endDate.day}`;
-
-								longDesc = 'No description found';
-
-								if (aniResEdit.description) {
-									longDesc = aniResEdit.description.replace(/<\/?[^>]+(>|$)/g, '').replace(/&lsquo;/g, '').replace(/\n/g, '');
-								}
-
-								if (aniResEdit.startDate.year === null) {
-									startDate = 'Unknown';
-								}
-
-								if (aniResEdit.startDate.year & !aniResEdit.startDate.day || !aniResEdit.startDate.month) {
-									startDate = aniResEdit.startDate.year;
-								}
-
-								if (aniResEdit.endDate.year === null) {
-									endDate = 'Unknown';
-								}
-
-								longDesc = truncate(longDesc, 300);
-
-								const aniEmbedEdit = new EmbedBuilder()
-									.setAuthor({ name: 'AniList [UNOFFICIAL]', iconURL: 'https://anilist.co/img/icons/android-chrome-512x512.png' })
-									.setColor(0x0000FF)
-									.setTitle(`${aniResEdit.title.romaji} [${aniResEdit.title.native}]`)
-									.setURL(aniResEdit.siteUrl)
-									.setThumbnail(aniResEdit.coverImage.large)
-									.setDescription(`${aniResEdit.title.english ? aniResEdit.title.english : ''}
-			
-			**Status** ${status} | **Type** ${type} | **Episodes** ${episodes}
-			**Studio** ${studio} | **Average Score** ${avgScore}%
-			**Genres** ${genres}
-								
-			**Start Date** ${startDate}
-			**End Date** ${endDate}
-								
-			**Description**
-			${longDesc}`)
-									.setFooter({ text: `Page: ${page + 1}/${maxPage}` });
-
-								msg.edit({ embeds: [aniEmbedEdit], components: [row] });
+								await i.update({ embeds: [animeEmbed] });
+							}).catch(async err => {
+								console.error(err);
+								await i.update({ content: 'An error occured while fetching the anime.' });
 							});
 						}
 					});
+					collector.on('end', async () => {
+						await msg.edit({ components: [] });
+					});
+				}).catch(async err => {
+					console.error(err);
+					await message.reply('An error occured while fetching the anime.');
 				});
-			} else {
-				message.reply(`No anime was found with name ${anime}`);
-			}
+			});
 		});
-
-		function getStatus(status) {
-			const statusRaw = {
-				'FINISHED': 'Finished',
-				'RELEASING': 'Ongoing',
-				'NOT_YET_RELEASED': 'Not Released',
-				'CANCELLED': 'Cancelled',
-				'UNKNOWN': 'Unknown',
-			};
-
-			return statusRaw[status] || statusRaw['UNKNOWN'];
-		}
 	},
 };

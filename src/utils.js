@@ -1,4 +1,5 @@
-// Copyright (C) 2022 Brody Jagoe
+// Copyright (C) 2023 Brody Jagoe
+
 const { ChannelType } = require('discord.js');
 
 module.exports = {

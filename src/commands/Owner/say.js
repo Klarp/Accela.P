@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Brody Jagoe
+// Copyright (C) 2023 Brody Jagoe
 /* eslint-disable no-undef */
 
 const { Client } = require('../../index');

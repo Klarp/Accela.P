@@ -1,7 +1,4 @@
-// Copyright (C) 2022 Brody Jagoe
-
-// Shows wrong user (Might need to test on Gavin)
-// Add kiss, hug, slap commands maybe? (this is pretty meta)
+// Copyright (C) 2023 Brody Jagoe
 
 const osu = require('node-osu');
 

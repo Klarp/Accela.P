@@ -1,3 +1,5 @@
+// Copyright (C) 2023 Brody Jagoe
+
 const { EmbedBuilder, PermissionsBitField, AuditLogEvent } = require('discord.js');
 const { sleep } = require('../utils');
 

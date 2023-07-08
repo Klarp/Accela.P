@@ -1,3 +1,5 @@
+// Copyright (C) 2023 Brody Jagoe
+
 const { sConfig } = require('../../database/dbObjects');
 const { Sentry } = require('../../log');
 

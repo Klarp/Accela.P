@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Brody Jagoe
+// Copyright (C) 2023 Brody Jagoe
 
 const { EmbedBuilder } = require('discord.js');
 const { Client } = require('../../index');
