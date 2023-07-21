@@ -8,38 +8,18 @@ module.exports = {
 	usage: '<user>',
 	cooldown: 60,
 	execute(message, args) {
+		let target;
 		if (args[0] === '-s') {
-			let menMember = message.mentions.members.first();
-			let memberFlag = false;
-
-			if (!menMember && args[1]) {
-				memberFlag = true;
-				if (!message.guild.members.cache.get(args[1])) return message.reply('Could not find that user!');
-				menMember = message.guild.members.cache.get(args[1]);
-			}
-
-			if (!menMember && memberFlag) menMember = message.member;
-
-			if (menMember) {
-				message.channel.send(menMember.displayAvatarURL({ size: 2048, dynamic: true }));
-			} else {
-				message.channel.send(message.member.displayAvatarURL({ size: 2048, dynamic: true }));
-			}
+			target = message.mentions.members.first()?.user
+					|| (args[1] && message.guild.members.cache.get(args[1]))
+					|| message.member;
 		} else {
-			let menUser = message.mentions.users.first();
-			let userFlag = false;
-			if (!menUser && args[0]) {
-				userFlag = true;
-				if (!message.guild.members.cache.get(args[0])) return message.reply('Could not find that user!');
-				menUser = message.guild.members.cache.get(args[0]).user;
-			}
-			if (!menUser && userFlag) menUser = message.user;
-
-			if(menUser) {
-				message.channel.send(menUser.displayAvatarURL({ size: 2048, dynamic: true }));
-			} else {
-				message.channel.send(message.author.displayAvatarURL({ size: 2048, dynamic: true }));
-			}
+			target = message.mentions.users.first()
+					|| (args[0] && message.guild.members.cache.get(args[0])?.user)
+					|| message.author;
 		}
+
+		if (!target) return message.reply('Could not find that user!');
+		message.channel.send(target.displayAvatarURL({ size: 2048, dynamic: true }));
 	},
 };

@@ -8,7 +8,7 @@ const Sentry = require('../../../log');
 const { Client } = require('../../index');
 const { Users } = require('../../../database/dbObjects');
 const { osu_key } = require('../../../config.json');
-const { getRankRole } = require('../../utils');
+const { updateRankRole } = require('../../utils/discordUtils');
 
 module.exports = {
 	name: 'mode',
@@ -28,9 +28,12 @@ module.exports = {
 			'taiko': 1,
 			'ctb': 2,
 			'mania': 3,
+			'standard': 0,
+			'catch the beat': 2,
+			'catch': 2,
 		};
 
-		const modes = ['std', 'taiko', 'ctb', 'mania'];
+		const modes = ['std', 'taiko', 'ctb', 'mania', 'standard', 'catch the beat', 'catch'];
 
 		const noVerifyEmbed = new EmbedBuilder()
 			.setTitle('Please Verify Your osu! Account!')
@@ -50,7 +53,7 @@ module.exports = {
 				.setDescription(`**std (Standard)**
 **mania**
 **taiko**
-**ctb (Catch The Beat)**`)
+**ctb (Catch The Beat or Catch)**`)
 				.setFooter({ text: 'Use >>mode [mode]' });
 			message.channel.send({ embeds: [modeEmbed] });
 		} else {
@@ -134,7 +137,7 @@ module.exports = {
 					return message.reply('Error: "Something" wen\'t wrong.');
 				}
 			});
-			getRankRole(message.member, rank, userMode);
+			updateRankRole(message.member, rank, userMode);
 		}
 	},
 };

@@ -1,5 +1,4 @@
 // Copyright (C) 2023 Brody Jagoe
-/* eslint-disable no-undef */
 
 const { Client } = require('../../index');
 
@@ -8,47 +7,24 @@ module.exports = {
 	description: 'Say something in the osu server',
 	module: 'Owner',
 	owner: true,
-	execute(message, args) {
-		if (args[0] === '-g') {
-			if (args[1]) {
-				const argMessage = args.slice(1).join(' ');
-				Client.guilds.cache.get('98226572468690944').channels.cache.get('98226572468690944').send(argMessage);
-			}
-		}
+	async execute(message, args) {
+		const channels = {
+			'-g': '98226572468690944',
+			'-w': '158484765136125952',
+			'-osu': '98227800330227712',
+			'-off': '158481913055674368',
+			'-m': '739447503115649054',
+			'-b': '277163440999628800',
+		};
 
-		if (args[0] === '-w') {
-			if (args[1]) {
-				const argMessage = args.slice(1).join(' ');
-				Client.guilds.cache.get('98226572468690944').channels.cache.get('158484765136125952').send(argMessage);
-			}
-		}
+		const channelId = channels[args[0]];
+		if (!channelId || !args[1]) return;
 
-		if (args[0] === '-osu') {
-			if (args[1]) {
-				const argMessage = args.slice(1).join(' ');
-				Client.guilds.cache.get('98226572468690944').channels.cache.get('98227800330227712').send(argMessage);
-			}
-		}
-
-		if (args[0] === '-off') {
-			if (args[1]) {
-				const argMessage = args.slice(1).join(' ');
-				Client.guilds.cache.get('98226572468690944').channels.cache.get('158481913055674368').send(argMessage);
-			}
-		}
-
-		if (args[0] === '-m') {
-			if (args[1]) {
-				const argMessage = args.slice(1).join(' ');
-				Client.guilds.cache.get('98226572468690944').channels.cache.get('739447503115649054').send(argMessage);
-			}
-		}
-
-		if (args[0] === '-b') {
-			if (args[1]) {
-				const argMessage = args.slice(1).join(' ');
-				Client.guilds.cache.get('98226572468690944').channels.cache.get('277163440999628800').send(argMessage);
-			}
+		const argMessage = args.slice(1).join(' ');
+		try {
+			await Client.guilds.cache.get('98226572468690944').channels.cache.get(channelId).send(argMessage);
+		} catch (error) {
+			console.error(`Error sending message: ${error}`);
 		}
 	},
 };

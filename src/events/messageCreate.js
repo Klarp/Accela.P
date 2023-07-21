@@ -3,7 +3,7 @@
 const { Collection, EmbedBuilder, ChannelType } = require('discord.js');
 const { Client } = require('../index');
 const { owners } = require('../../config.json');
-const { checkPerm } = require('../utils');
+const { hasPermission } = require('../utils/discordUtils');
 
 const cooldowns = new Collection();
 
@@ -13,22 +13,9 @@ module.exports = {
 		// if (!servers.includes(message.guildId)) return;
 		if (message.webhookID) return;
 
-		let serverConfig;
-
-		let prefix = '>>';
-
-		if (serverConfig) {
-			prefix = serverConfig.get('prefix');
-		}
+		const prefix = '>>';
 
 		if (message.author.bot) return;
-
-		const mentionTest = message.content.split(' ');
-
-		// Needs fixing
-		if (mentionTest[0] === `<@!${Client.user.id}>` && !mentionTest[1]) {
-			message.channel.send(`Hello, my current prefix is: \`${prefix}\` if you need help use \`${prefix}help\` for more information.`);
-		}
 
 		if (!message.content.startsWith(prefix)) return;
 
@@ -48,6 +35,10 @@ module.exports = {
 		}
 		*/
 
+		// Private Test
+		// if (message.author.id !== '186493565445079040') return;
+
+
 		const args = message.content.slice(prefix.length).split(/ +/);
 		const commandName = args.shift().toLowerCase();
 
@@ -61,9 +52,6 @@ module.exports = {
 		// Stop if a command wasn't found
 		if (!command) return;
 
-		// Private Test
-		// if (message.author.id !== '186493565445079040') return;
-
 		// If command is owner only check if user is owner
 		if (command.owner) {
 			if (!owners.includes(message.author.id)) return;
@@ -71,8 +59,8 @@ module.exports = {
 
 		// If command has permissions check user permissions
 		if (command.perms) {
-			console.log(checkPerm(message.member, command.perms, message));
-			if (checkPerm(message.member, command.perms, message)) return;
+			console.log(hasPermission(message.member, command.perms, message));
+			if (hasPermission(message.member, command.perms, message)) return;
 		}
 
 		// Stop if a command can't be run inside DMs
@@ -132,13 +120,27 @@ module.exports = {
 		} catch (error) {
 		// If failed to execute console log the error
 			console.error(error);
+
+			// Handle network errors by retrying the command
+			if (error.code === 'ETIMEDOUT' || error.code === 'ECONNRESET') {
+				try {
+					// Retry the command after waiting for 5 seconds
+					setTimeout(async () => {
+						await command.execute(message, args);
+					}, 5000);
+				} catch (retryError) {
+					console.error(retryError);
+					// Inform the user that the command failed
+					await message.channel.send('Failed to execute the command. Please try again later.');
+				}
+				return;
+			}
+
 			// Creation of error embed
 			const errorEmbed = new EmbedBuilder()
 				.setTitle('An Error Has Occurred')
 				.setColor(0xFF0000)
-				.setDescription(`OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!
-			
-Please do not contact @Klarp#0001 if you see this message`);
+				.setDescription('OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!');
 			// Sends error embed on command failure
 			message.channel.send({ embeds: [errorEmbed] });
 		}

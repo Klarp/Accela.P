@@ -1,6 +1,7 @@
 // Copyright (C) 2023 Brody Jagoe
 
 const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder } = require('discord.js');
+const { toTitleCase, formatDate } = require('../../utils/stringUtils');
 
 const anilist_node = require('anilist-node');
 const aniList = new anilist_node();
@@ -17,16 +18,6 @@ module.exports = {
 		const mangaFilter = {
 			isAdult: false,
 		};
-
-		const toTitleCase = str => {
-			return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-		};
-
-		function formatDate(year, month, day) {
-			const date = new Date(year, month - 1, day);
-			const formattedDate = date.toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
-			return formattedDate;
-		}
 
 		aniList.searchEntry.manga(mangaName, mangaFilter, 1, 5).then(mangaData => {
 			if (mangaData.media.length === 0) {

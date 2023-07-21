@@ -6,7 +6,7 @@ const osu = require('node-osu');
 const { EmbedBuilder, PermissionsBitField, ChannelType } = require('discord.js');
 
 const Sentry = require('../../../log');
-const { getRankRole } = require('../../utils');
+const { updateRankRole } = require('../../utils/discordUtils');
 const { osu_key, osu_key_v2 } = require('../../../config.json');
 const { Users } = require('../../../database/dbObjects');
 const { Client } = require('../../index');
@@ -84,7 +84,6 @@ module.exports = {
 						url: 'https://osu.ppy.sh/api/v2/me/osu',
 					};
 
-					// GET VERIFICATION THROUGH OSU (ADD getRankRole.js TO FIX)
 					axios(options)
 						.then(async function(res) {
 							const user = res.data;
@@ -149,7 +148,7 @@ Rank (osu!std): ${userStat.global_rank}`)
 										if (mode === 1 && taiko_rank !== null) rank = taiko_rank;
 										if (mode === 2 && ctb_rank !== null) rank = ctb_rank;
 										if (mode === 3 && mania_rank !== null) rank = mania_rank;
-										getRankRole(osuMember, rank, mode);
+										updateRankRole(osuMember, rank, mode);
 										logChannel.send(`:white_check_mark: ${message.author} (ID: ${message.author.id}) verified with ${user.username} (osu! ID: ${user.id})`);
 									}
 								}
@@ -181,7 +180,7 @@ Rank (osu!std): ${userStat.global_rank}`)
 													if (mode === 1 && taiko_rank !== null) rank = taiko_rank;
 													if (mode === 2 && ctb_rank !== null) rank = ctb_rank;
 													if (mode === 3 && mania_rank !== null) rank = mania_rank;
-													getRankRole(osuMember, rank, mode);
+													updateRankRole(osuMember, rank, mode);
 													logChannel.send(`:white_check_mark: ${message.author} (ID: ${message.author.id}) verified with ${user.username} (osu! ID: ${user.id})`);
 												}
 											}

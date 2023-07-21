@@ -4,6 +4,7 @@ const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, Ac
 
 const anilist_node = require('anilist-node');
 const aniList = new anilist_node();
+const { toTitleCase, formatDate } = require('../../utils/stringUtils');
 
 module.exports = {
 	name: 'anime',
@@ -18,16 +19,6 @@ module.exports = {
 		const animeFilter = {
 			isAdult: false,
 		};
-
-		const toTitleCase = str => {
-			return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-		};
-
-		function formatDate(year, month, day) {
-			const date = new Date(year, month - 1, day);
-			const formattedDate = date.toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
-			return formattedDate;
-		}
 
 		aniList.searchEntry.anime(animeName, animeFilter, 1, 5).then(animeData => {
 			if (animeData.media.length === 0) {

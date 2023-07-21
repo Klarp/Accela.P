@@ -71,7 +71,7 @@ module.exports = {
 **Uptime:** ${uptime}
 			
 **Roles:** ${roles}`)
-			.setFooter({ text: `Created by: Klarp#0001 | Version: ${version} | Framework: discord.js ${discordjsVersion}` });
+			.setFooter({ text: `Created by: Klarp | Version: ${version} | Framework: discord.js ${discordjsVersion}` });
 		message.channel.send({ embeds: [infoEmbed], components: [binfoButtons] });
 	},
 };

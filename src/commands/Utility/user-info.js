@@ -4,7 +4,7 @@
 
 const { EmbedBuilder } = require('discord.js');
 const { Client } = require('../../index.js');
-const { timeSince } = require('../../utils');
+const { timeSince } = require('../../utils/stringUtils');
 
 module.exports = {
 	name: 'user-info',

@@ -1,10 +1,10 @@
 // Copyright (C) 2023 Brody Jagoe
 
-const { EmbedBuilder, Collection, ChannelType } = require('discord.js');
+const { EmbedBuilder, Collection } = require('discord.js');
 
-const { timeSince } = require('../../utils');
-const { upDate } = require('../../events/ready');
-const { Users, sConfig } = require('../../../database/dbObjects');
+const { Users } = require('../../../database/dbObjects');
+const { titleCase } = require('../../utils/stringUtils');
+const { modeRanks } = require('../../../config.json');
 
 const userList = new Collection();
 
@@ -18,237 +18,84 @@ module.exports = {
 	async execute(message, args) {
 		const users = await Users.findAll();
 		const server = message.guild;
-		const newDate = upDate();
-
-		let mode = 'std';
-		if (args[0]) mode = args[0];
 		const modes = ['std', 'taiko', 'ctb', 'mania'];
+		const mode = args[0] ? args[0].toLowerCase() : 'std';
+		if (!modes.includes(mode)) return message.channel.send('Invalid Mode! Please try again.');
 
-		let prefix = '>>';
-		if (message.channel.type !== ChannelType.DM) {
-			const serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
-			if (serverConfig) {
-				prefix = serverConfig.get('prefix');
-			}
+		const nameColumnWidth = 32;
+		const rankColumnWidth = 9;
+
+		let table = '';
+		table += getHeader(nameColumnWidth, rankColumnWidth) + '\n';
+
+		await users.forEach(u => userList.set(u.user_id, { verified_id: u.verified_id, user_id: u.user_id, osu_name: u.osu_name, rank: u[modeRanks[mode]] }));
+
+		const newList = userList.sort((a, b) => a.rank - b.rank)
+			.filter(user => server.members.cache.has(user.user_id))
+			.filter(user => user.verified_id !== null)
+			.filter(user => user.rank !== null && user.rank > 0);
+
+		const leaderList = newList.first(10);
+
+		for (let i = 0; i < leaderList.length; i++) {
+			table += getRow(i + 1, leaderList[i], nameColumnWidth, rankColumnWidth) + '\n';
 		}
 
-		if (!args[0]) {
-			const nameColumnWidth = 32;
-			const rankColumnWidth = 9;
+		const listArray = Array.from(newList.values());
+		const posNumber = listArray.findIndex(u => u.user_id === message.author.id) + 1;
+		const listUser = listArray.find(u => u.user_id === message.author.id);
 
-			let table = '';
+		table += getPos(posNumber, listArray, listUser, nameColumnWidth, rankColumnWidth);
 
-			table += getHeader(nameColumnWidth, rankColumnWidth) + '\n';
-
-			await users.forEach(u => userList.set(u.user_id, { verified_id: u.verified_id, user_id: u.user_id, osu_name: u.osu_name, rank: u.std_rank }));
-
-			const newList = userList.sort((a, b) => a.rank - b.rank)
-				.filter(user => server.members.cache.has(user.user_id))
-				.filter(user => message.guild.members.cache.get(user.user_id))
-				.filter(user => user.verified_id !== null)
-				.filter(user => user.rank !== null && user.rank > 0);
-
-			const leaderList = newList.first(10);
-
-			for (let i = 0; i < leaderList.length; i++) {
-				table += getRow(i + 1, leaderList[i], nameColumnWidth, rankColumnWidth) + '\n';
-			}
-
-			const listArray = new Array(newList);
-			const posNumber = listArray.findIndex(u => u.user_id === message.author.id) + 1;
-			const listUser = newList.get(message.author.id);
-
-			table += getPos(posNumber, listArray, listUser, nameColumnWidth, rankColumnWidth);
-
-			const leaderEmbed = new EmbedBuilder()
-				.addField(`${message.guild.name} Discord Leaderboard (osu!${mode})`, `\`\`\`scala
-${table}
-\`\`\``)
-				.setColor(0xaf152a)
-				.setFooter(`Last Updated ${timeSince(newDate)} • ${prefix}lb [mode] for other gamemodes`);
-
-			message.channel.send({ embeds: [leaderEmbed] });
-		} else {
-			mode = args[0].toLowerCase();
-			if (!modes.includes(mode)) return message.channel.send('Invalid Mode! Please try again.');
-
-
-			const nameColumnWidth = 32;
-			const rankColumnWidth = 9;
-
-			let table = '';
-
-			table += getHeader(nameColumnWidth, rankColumnWidth) + '\n';
-
-			if (mode === 'std') await users.forEach(u => userList.set(u.user_id, { verified_id: u.verified_id, user_id: u.user_id, osu_name: u.osu_name, rank: u.std_rank }));
-			if (mode === 'taiko') await users.forEach(u => userList.set(u.user_id, { verified_id: u.verified_id, user_id: u.user_id, osu_name: u.osu_name, rank: u.taiko_rank }));
-			if (mode === 'ctb') await users.forEach(u => userList.set(u.user_id, { verified_id: u.verified_id, user_id: u.user_id, osu_name: u.osu_name, rank: u.ctb_rank }));
-			if (mode === 'mania') await users.forEach(u => userList.set(u.user_id, { verified_id: u.verified_id, user_id: u.user_id, osu_name: u.osu_name, rank: u.mania_rank }));
-
-			const newList = userList.sort((a, b) => a.rank - b.rank)
-				.filter(user => server.members.cache.has(user.user_id))
-				.filter(user => user.verified_id !== null)
-				.filter(user => user.rank !== null && user.rank > 0);
-
-			const leaderList = newList.first(10);
-
-			for (let i = 0; i < leaderList.length; i++) {
-				table += getRow(i + 1, leaderList[i], nameColumnWidth, rankColumnWidth) + '\n';
-			}
-
-			const listArray = newList.array();
-			const posNumber = listArray.findIndex(u => u.user_id === message.author.id) + 1;
-			const listUser = listArray.find(u => u.user_id === message.author.id);
-
-			table += getPos(posNumber, listArray, listUser, nameColumnWidth, rankColumnWidth);
-
-			const leaderEmbed = new EmbedBuilder()
-				.addField(`${message.guild.name} Discord Leaderboard (osu!${mode})`, `\`\`\`scala
-${table}
-\`\`\``)
-				.setColor(0xaf152a)
-				.setFooter(`Last Updated ${timeSince(newDate)}`);
-
-			message.channel.send({ embeds: [leaderEmbed] });
-		}
-
-		/*
-		/////////////////////////// EMBED BUILDING ///////////////////////////
-		*/
+		const leaderEmbed = new EmbedBuilder()
+			.addFields(
+				{ name: `${message.guild.name} Discord Leaderboard (osu!${mode})`, value: `\`\`\`scala\n${table}\n\`\`\`` },
+			)
+			.setColor(0xaf152a);
+		message.channel.send({ embeds: [leaderEmbed] });
 
 		function getHeader(nameWidth, rankWidth) {
-			let header = '';
-			header += 'Name (osu! User)';
-
-			for (let i = header.length; i <= nameWidth; i++) {
-				header += ' ';
-			}
-
-			header += '| Rank';
-
-			for (let i = 5; i < rankWidth; i++) {
-				header += ' ';
-			}
-
-			header += '|';
-
-			header += '\n';
-
-			for (let i = 0; i <= nameWidth; i++) {
-				header += '-';
-			}
-
-			header += '+';
-
-			for (let i = 0; i < rankWidth; i++) {
-				header += '-';
-			}
-
-			header += '+';
-
-			return header;
+			const header = 'Name (osu! User)'.padEnd(nameWidth) + '| Rank'.padEnd(rankWidth) + '|';
+			const divider = '+'.padStart(nameWidth + 1, '-') + '+'.padEnd(rankWidth + 1, '-');
+			return `${header}\n${divider}`;
 		}
 
 		function getRow(pos, user, nameWidth, rankWidth) {
-			let row = '';
-			let longName;
 			const discordUser = server.members.cache.get(user.user_id).user;
 			const discordTag = titleCase(discordUser.tag);
-
 			let userName = `${pos}. ${discordTag} (${user.osu_name})`;
+
+			let longName;
+
 			if (userName.length > nameWidth) {
 				userName = `${pos}. ${discordTag}`;
 				longName = user.osu_name;
 			}
 
-			row += userName;
-
-			for (let i = userName.length; i <= nameWidth; i++) {
-				row += ' ';
-			}
-
-			row += '| ';
-
-			row += user.rank;
-
-			for (let i = user.rank.length; i < rankWidth - 1; i++) {
-				row += ' ';
-			}
-
-			row += '|';
+			const row = `${userName.padEnd(nameWidth)}| ${user.rank.toString().padEnd(rankWidth - 1)}|`;
 
 			if (longName) {
-				row += '\n' + `(${longName})`;
-
-				for (let i = longName.length; i < nameWidth - 1; i++) {
-					row += ' ';
-				}
-
-				row += '| ';
-
-				for (let i = 1; i < rankWidth; i++) {
-					row += ' ';
-				}
-
-				row += '|';
+				const longNameRow = `(${longName}).padEnd(nameWidth - 1)| `.padEnd(rankWidth) + '|';
+				return `${row}\n${longNameRow}`;
 			}
 
 			return row;
 		}
 
+
 		function getPos(pos, list, user, nameWidth, rankWidth) {
-			let posHolder = '';
-			if (!user) return posHolder;
+			if (!user) return '';
+
 			const rank = user.rank;
-			console.log(pos);
+			const positionText = `Your Position: ${pos}/${list.length}`;
+			const divider = '+'.padStart(nameWidth + 1, '-') + '+'.padEnd(rankWidth + 1, '-');
+			const posRow = `${positionText.padEnd(nameWidth)}| ${rank.toString().padEnd(rankWidth - 1)}|`;
 
-			let positionText = `Your Position: ${pos}/${list.length}`;
-
-			for (let i = 0; i <= nameWidth; i++) {
-				posHolder += '-';
-			}
-
-			posHolder += '+';
-
-			for (let i = 0; i < rankWidth; i++) {
-				posHolder += '-';
-			}
-
-			posHolder += '+ \n';
-
-			if (pos === 0) {
-				positionText = '';
-				posHolder += positionText;
-			} else {
-				posHolder += positionText;
-			}
-
-			for (let i = positionText.length; i <= nameWidth; i++) {
-				posHolder += ' ';
-			}
-
-			posHolder += '| ';
-
-			posHolder += rank;
-
-			for (let i = rank.length; i < rankWidth - 1; i++) {
-				posHolder += ' ';
-			}
-
-			posHolder += '|';
-
-			return posHolder;
+			return `${divider}\n${posRow}`;
 		}
 	},
 };
 
-function titleCase(str) {
-	str = str.toLowerCase().split(' ');
-	for (let i = 0; i < str.length; i++) {
-		str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
-	}
-	return str.join(' ');
-}
 
 /*
 Name                      	 | Rank          |

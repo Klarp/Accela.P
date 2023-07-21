@@ -87,5 +87,10 @@ process.on('unhandledRejection', error => {
 	Sentry.captureException(error);
 });
 
+process.on('uncaughtException', error => {
+	console.error(`Uncaught exception: ${error}`);
+	Sentry.captureException(error);
+});
+
 
 client.login(token);

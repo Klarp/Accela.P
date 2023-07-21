@@ -1,11 +1,15 @@
 {
 	"extends": "eslint:recommended",
+	"plugins": ["jest"],
 	"env": {
 		"node": true,
-		"es6": true
+		"es6": true,
+		"jest": true
 	},
+	"parser": "@babel/eslint-parser",
 	"parserOptions": {
-		"ecmaVersion": 2019
+		"ecmaVersion": 2020,
+		"requireConfigFile": false
 	},
 	"rules": {
 		"brace-style": ["error", "1tbs", { "allowSingleLine": true }],

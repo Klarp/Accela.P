@@ -1,13 +1,31 @@
 // Copyright (C) 2023 Brody Jagoe
 const osu = require('node-osu');
-
-const { EmbedBuilder, ChannelType } = require('discord.js');
-
+const { EmbedBuilder, ChannelType, PermissionsBitField } = require('discord.js');
 const Sentry = require('../../../log');
-const { getRankRole } = require('../../utils');
-const { osu_key, owners } = require('../../../config.json');
+const { updateRankRole, hasPermission } = require('../../utils/discordUtils');
+const { osu_key } = require('../../../config.json');
 const { Users, sConfig } = require('../../../database/dbObjects');
 const { Client } = require('../../index');
+
+// Function to handle retrieving user ranks for the different game modes.
+const getUserRanks = async (osuApi, osuId) => {
+	const modes = [0, 1, 2, 3];
+	const ranks = ['std_rank', 'taiko_rank', 'ctb_rank', 'mania_rank'];
+	const rankResults = {};
+
+	for (let i = 0; i < modes.length; i++) {
+		try {
+			const osuUser = await osuApi.getUser({ u: osuId, m: modes[i] });
+			rankResults[ranks[i]] = osuUser.pp.rank === '0' ? null : osuUser.pp.rank;
+		} catch (error) {
+			Sentry.captureException(error);
+			console.error(error);
+			rankResults[ranks[i]] = null;
+		}
+	}
+
+	return rankResults;
+};
 
 module.exports = {
 	name: 'update',
@@ -40,7 +58,7 @@ module.exports = {
 
 			if (!user) {
 				return message.reply(`User is not verified! Use \`${prefix}verify\` to verify!`).then(msg => {
-					setTimeout(() => msg.delete, 5000);
+					setTimeout(() => msg.delete(), 5000);
 				});
 			}
 			if (user.verified_id && Client.users.cache.has(user.user_id)) {
@@ -48,42 +66,19 @@ module.exports = {
 				const userID = user.get('user_id');
 				const mode = user.get('osu_mode');
 
-				let std_rank = null;
-				let taiko_rank = null;
-				let ctb_rank = null;
-				let mania_rank = null;
-
-				// std
-				await osuApi.getUser({ u: osuID, m: 0 }).then(osuUser => {
-					std_rank = osuUser.pp.rank;
-					if (std_rank === '0') std_rank = null;
-				});
-				// Taiko
-				await osuApi.getUser({ u: osuID, m: 1 }).then(osuUser => {
-					taiko_rank = osuUser.pp.rank;
-					if (taiko_rank === '0') taiko_rank = null;
-				});
-				// ctb
-				await osuApi.getUser({ u: osuID, m: 2 }).then(osuUser => {
-					ctb_rank = osuUser.pp.rank;
-					if (ctb_rank === '0') ctb_rank = null;
-				});
-				// Mania
-				await osuApi.getUser({ u: osuID, m: 3 }).then(osuUser => {
-					mania_rank = osuUser.pp.rank;
-					if (mania_rank === '0') mania_rank = null;
-				});
-
 				try {
+					const { std_rank, taiko_rank, ctb_rank, mania_rank } = await getUserRanks(osuApi, osuID);
+
 					const upUser = await Users.update({
-						std_rank: std_rank,
-						taiko_rank: taiko_rank,
-						ctb_rank: ctb_rank,
-						mania_rank: mania_rank,
+						std_rank,
+						taiko_rank,
+						ctb_rank,
+						mania_rank,
 					},
 					{
 						where: { user_id: userID },
 					});
+
 					if (upUser > 0) {
 						let rank;
 						if (mode === 0 && std_rank !== null) rank = std_rank;
@@ -92,7 +87,7 @@ module.exports = {
 						if (mode === 3 && mania_rank !== null) rank = mania_rank;
 						const osuMember = osuGame.members.cache.get(userID);
 						if (osuMember) {
-							getRankRole(osuMember, rank, mode);
+							updateRankRole(osuMember, rank, mode);
 							logChannel.send(`**Updating ${message.author}**`);
 						}
 					}
@@ -123,7 +118,7 @@ osu!mania: ${mania_rank}`);
 				}
 			}
 		} else if (option === 'user') {
-			if (!owners.includes(message.author.id)) return;
+			if (!hasPermission(message.member, PermissionsBitField.Flags.KickMembers, message)) return;
 			let findUser;
 			if (message.mentions.users.first()) {
 				findUser = message.mentions.users.first();
@@ -132,7 +127,6 @@ osu!mania: ${mania_rank}`);
 			}
 
 			const user = await Users.findOne({ where: { user_id: findUser.id } });
-			console.log(user);
 
 			if (!user) {
 				return message.reply('User is not verified!').then(msg => {
@@ -144,42 +138,19 @@ osu!mania: ${mania_rank}`);
 				const userID = user.get('user_id');
 				const mode = user.get('osu_mode');
 
-				let std_rank = null;
-				let taiko_rank = null;
-				let ctb_rank = null;
-				let mania_rank = null;
-
-				// std
-				await osuApi.getUser({ u: osuID, m: 0 }).then(osuUser => {
-					std_rank = osuUser.pp.rank;
-					if (std_rank === '0') std_rank = null;
-				});
-				// Taiko
-				await osuApi.getUser({ u: osuID, m: 1 }).then(osuUser => {
-					taiko_rank = osuUser.pp.rank;
-					if (taiko_rank === '0') taiko_rank = null;
-				});
-				// ctb
-				await osuApi.getUser({ u: osuID, m: 2 }).then(osuUser => {
-					ctb_rank = osuUser.pp.rank;
-					if (ctb_rank === '0') ctb_rank = null;
-				});
-				// Mania
-				await osuApi.getUser({ u: osuID, m: 3 }).then(osuUser => {
-					mania_rank = osuUser.pp.rank;
-					if (mania_rank === '0') mania_rank = null;
-				});
-
 				try {
+					const { std_rank, taiko_rank, ctb_rank, mania_rank } = await getUserRanks(osuApi, osuID);
+
 					const upUser = await Users.update({
-						std_rank: std_rank,
-						taiko_rank: taiko_rank,
-						ctb_rank: ctb_rank,
-						mania_rank: mania_rank,
+						std_rank,
+						taiko_rank,
+						ctb_rank,
+						mania_rank,
 					},
 					{
 						where: { user_id: userID },
 					});
+
 					if (upUser > 0) {
 						let rank;
 						if (mode === 0 && std_rank !== null) rank = std_rank;
@@ -188,7 +159,7 @@ osu!mania: ${mania_rank}`);
 						if (mode === 3 && mania_rank !== null) rank = mania_rank;
 						const osuMember = osuGame.members.cache.get(userID);
 						if (osuMember) {
-							getRankRole(osuMember, rank, mode);
+							updateRankRole(osuMember, rank, mode);
 							logChannel.send(`**Force Updating ${findUser}**`);
 						}
 					}
@@ -204,7 +175,7 @@ osu!mania: ${mania_rank}`);
 
 					const updateEmbed = new EmbedBuilder()
 						.setTitle('Verification Update')
-						.setAuthor({ name: findUser.tag })
+						.setAuthor({ name: findUser.username })
 						.setColor(0xaf152a)
 						.setDescription(`Mode: ${osuMode}
 osu!std: ${std_rank}

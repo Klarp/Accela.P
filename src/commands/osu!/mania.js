@@ -1,13 +1,11 @@
 // Copyright (C) 2023 Brody Jagoe
 
 const osu = require('node-osu');
-
-const { EmbedBuilder, ChannelType } = require('discord.js');
-
-const Sentry = require('../../../log');
-const { Client } = require('../../index');
+const { ChannelType } = require('discord.js');
+const { sendEmbedMessage, handleError } = require('../../utils/osuUtils');
 const { osu_key } = require('../../../config.json');
 const { Users, sConfig } = require('../../../database/dbObjects');
+const { Client } = require('../../index');
 
 module.exports = {
 	name: 'mania',
@@ -17,154 +15,35 @@ module.exports = {
 	disableOsu: true,
 	usage: '<user>',
 	async execute(message, args) {
-
-		// Access the api
 		const osuApi = new osu.Api(osu_key, {
 			notFoundAsError: true,
 			completeScores: true,
 			parseNumeric: true,
 		});
 
-		let findUser;
-		let menUser = message.mentions.users.first();
-		let memberFlag = false;
-
-		if (menUser) {
-			if (message.type === 'REPLY') menUser = null;
-		}
-
-		if (args[0] && !menUser && !memberFlag) {
-			memberFlag = true;
-			if (message.guild.members.cache.get(args[0])) findUser = message.guild.members.cache.get(args[0]);
-		}
-
-		if (!menUser && !memberFlag) findUser = message.member;
-
 		let prefix = '>>';
-		let name;
-		let id;
-		let verified = `:x: Not Verified [use ${prefix}verify]`;
+
+		let findUser = message.mentions.users.first()
+			|| message.guild.members.cache.get(args[0])
+			|| message.member;
 
 		if (message.channel.type !== ChannelType.DM) {
 			const serverConfig = await sConfig.findOne({ where: { guild_id: message.guild.id } });
-			if (serverConfig) {
-				prefix = serverConfig.get('prefix');
-			}
+			if (serverConfig) prefix = serverConfig.get('prefix');
 		}
 
-		const cyberia = Client.guilds.cache.get('687858540425117755');
+		const verifiedEmote = Client.guilds.cache.get('687858540425117755').emojis.cache.find(emoji => emoji.name === 'verified');
 
-		const verifiedEmbed = cyberia.emojis.cache.find(emoji => emoji.name === 'verified');
+		findUser = await Users.findOne({ where: { user_id: findUser.id } });
 
-		// Access database
-		if (menUser) {
-			findUser = await Users.findOne({ where: { user_id: menUser.id } });
-		} else if (!memberFlag) {
-			findUser = await Users.findOne({ where: { user_id: message.author.id } });
+		const name = findUser?.get('verified_id') || findUser?.get('osu_id') || (args[0] && args.join(' ')) || findUser.username;
+		const verified = findUser && findUser.get('verified_id') ? `${verifiedEmote} Verified` : `:x: Not Verified [use ${prefix}verify]`;
+
+		try {
+			const user = await osuApi.getUser({ m: 3, u: name });
+			sendEmbedMessage(user, verified, message, 'mania', name);
+		} catch(e) {
+			handleError(e, message, name);
 		}
-
-		if (menUser) {
-			name = menUser.username;
-			verified = '';
-		}
-
-		// Find the user in the database
-		if (findUser) {
-			if (findUser.get('verified_id')) {
-				id = findUser.get('verified_id');
-				name = findUser.get('osu_name');
-				verified = `${verifiedEmbed} Verified`;
-			} else {
-				id = findUser.get('osu_id');
-			}
-		} else {
-			menUser ? name = menUser.username : name = message.author.username;
-		}
-
-		// Use arguments if applicable
-		if (!menUser && args[0]) {
-			name = args[0];
-			verified = '';
-		}
-
-		if (!menUser && args[1]) {
-			name = args.join(' ');
-			verified = '';
-		}
-
-		if (!menUser && !findUser && !args[0]) {
-			message.channel.send(`No link found: use ${prefix}link [osu user] to link your osu! account!`);
-		}
-
-		const search = name || id;
-
-		// Find user through the api
-		osuApi.getUser({ m: 3, u: search }).then(async user => {
-			let d = user.raw_joinDate;
-			let rank;
-			let crank;
-			let playCount;
-			let acc;
-			d = d.split(' ')[0];
-
-			if (user.pp.rank) {
-				rank = user.pp.rank.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-			} else {
-				rank = '0';
-			}
-
-			if (user.pp.countryRank) {
-				crank = user.pp.countryRank.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-			} else {
-				crank = '0';
-			}
-
-			if (user.accuracyFormatted === 'NaN%') {
-				acc = '0%';
-			} else {
-				acc = user.accuracyFormatted;
-			}
-
-			if (user.counts.plays) {
-				playCount = user.counts.plays;
-			} else {
-				playCount = '0';
-			}
-
-			const country = user.country.toLowerCase();
-
-			const countryEmote = `:flag_${country}:`;
-
-			// Create the embed
-			const osuEmbed = new EmbedBuilder()
-				.setAuthor({ name: `${user.name || name}`, iconURL: `http://a.ppy.sh/${user.id}`, url: `https://osu.ppy.sh/u/${user.id}` })
-				.setColor(0xaf152a)
-				.setTitle(`Information On ${user.name}`)
-				.setURL(`https://osu.ppy.sh/u/${user.id}`)
-				.setThumbnail(`http://a.ppy.sh/${user.id}`)
-				.setDescription(`**Level** ${Math.floor(user.level)} | **Global Rank** ${rank} | **[${countryEmote}](https://osu.ppy.sh/rankings/mania/performance?country=${user.country} 'Country Rankings') Rank** ${crank}
-				
-**PP** ${Math.round(user.pp.raw)} | **Accuracy** ${acc} | **Play Count** ${playCount}
-
-${verified}`)
-				.setFooter({ text: `osu!mania • Joined ${d}` });
-				/*
-				.addField('Accuracy', user.accuracyFormatted, true)
-				.addField('Play Count', user.counts.plays, true)
-				.addField('Rank', rank, true)
-				.addField(`Country Rank (${user.country})`, crank, true)
-				.addField('PP', Math.round(user.pp.raw), true)
-				*/
-
-
-			message.channel.send({ embeds: [osuEmbed] });
-		}).catch(e => {
-			if (e.name == 'Error') {
-				return message.reply('No user was found with name/id ${name}!');
-			}
-			Sentry.captureException(e);
-			console.error(e);
-			return message.reply('An error has occured!');
-		});
 	},
 };

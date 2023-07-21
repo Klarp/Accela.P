@@ -1,7 +1,7 @@
 // Copyright (C) 2023 Brody Jagoe
 
 const { EmbedBuilder, PermissionsBitField, AuditLogEvent } = require('discord.js');
-const { sleep } = require('../utils');
+const { sleep } = require('../utils/stringUtils');
 
 module.exports = {
 	name: 'guildBanRemove',
@@ -11,6 +11,7 @@ module.exports = {
 
 		await sleep(1200);
 
+		// Early exit if bot does not have required permission
 		if (!guild.members.me.permissions.has(PermissionsBitField.Flags.ViewAuditLog)) return;
 
 		const fetchedLogs = await guild.fetchAuditLogs({
@@ -20,46 +21,24 @@ module.exports = {
 
 		const unBanLog = fetchedLogs.entries.first();
 
-		// If mod logging is true log the unban
-		if (guild.id === '98226572468690944') {
-			if (!unBanLog) {
-				const unbanEmbed = new EmbedBuilder()
-					.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-					.setColor(0x4BB580)
-					.setTitle(`Unbanned ${user.tag}`)
-					.setDescription(`:unlock: ${user}`)
-					.setFooter({ text: `ID: ${user.id}` })
-					.setTimestamp();
+		// Only log the unban for specific guild ID
+		if (guild.id !== '98226572468690944') return;
 
-				if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [unbanEmbed] });
-			} else {
-				const { executor, target } = unBanLog;
+		// Create common unbanEmbed
+		const unbanEmbed = new EmbedBuilder()
+			.setThumbnail(user.displayAvatarURL({ dynamic : true }))
+			.setColor(0x4BB580)
+			.setTitle(`Unbanned ${user.tag}`)
+			.setDescription(`:unlock: ${user}`)
+			.setFooter({ text: `ID: ${user.id}` })
+			.setTimestamp();
 
-
-				if (target.id === user.id) {
-					const unbanEmbed = new EmbedBuilder()
-						.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-						.setColor(0x4BB580)
-						.setTitle(`Unbanned ${user.tag}`)
-						.setDescription(`:unlock: ${user}
-
-**Moderator:** ${executor}`)
-						.setFooter({ text: `ID: ${user.id}` })
-						.setTimestamp();
-
-					if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [unbanEmbed] });
-				} else {
-					const unbanEmbed = new EmbedBuilder()
-						.setThumbnail(user.displayAvatarURL({ dynamic : true }))
-						.setColor(0x4BB580)
-						.setTitle(`Unbanned ${user.tag}`)
-						.setDescription(`:unlock: ${user}`)
-						.setFooter({ text: `ID: ${user.id}` })
-						.setTimestamp();
-
-					if (guild.id === '98226572468690944') return guild.channels.cache.get('158484765136125952').send({ embeds: [unbanEmbed] });
-				}
+		if (unBanLog) {
+			const { executor, target } = unBanLog;
+			if (target.id === user.id) {
+				unbanEmbed.setDescription(`:unlock: ${user}\n\n**Moderator:** ${executor}`);
 			}
 		}
+		guild.channels.cache.get('158484765136125952').send({ embeds: [unbanEmbed] });
 	},
 };
