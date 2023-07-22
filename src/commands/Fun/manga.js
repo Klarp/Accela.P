@@ -1,7 +1,7 @@
 // Copyright (C) 2023 Brody Jagoe
 
 const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder } = require('discord.js');
-const { toTitleCase, formatDate } = require('../../utils/stringUtils');
+const { titleCase, formatDate } = require('../../utils/stringUtils');
 
 const anilist_node = require('anilist-node');
 const aniList = new anilist_node();
@@ -28,7 +28,7 @@ module.exports = {
 				let englishTitle = manga.title.english ? manga.title.english : '';
 				let romajiTitle = manga.title.romaji ? manga.title.romaji : '';
 				let nativeTitle = manga.title.native ? manga.title.native : '';
-				let status = manga.status ? toTitleCase(manga.status) : 'Unknown';
+				let status = manga.status ? titleCase(manga.status) : 'Unknown';
 				let format = manga.format ? manga.format : 'Unknown';
 				let volumes = manga.volumes ? manga.volumes : 'Unknown';
 				let chapters = manga.chapters ? manga.chapters : 'Unknown';
@@ -88,7 +88,7 @@ ${description}`);
 								englishTitle = newManga.title.english ? newManga.title.english : '';
 								romajiTitle = newManga.title.romaji ? newManga.title.romaji : '';
 								nativeTitle = newManga.title.native ? newManga.title.native : '';
-								status = newManga.status ? toTitleCase(newManga.status) : 'Unknown';
+								status = newManga.status ? titleCase(newManga.status) : 'Unknown';
 								volumes = newManga.volumes ? newManga.volumes : 'Unknown';
 								chapters = newManga.chapters ? newManga.chapters : 'Unknown';
 								format = newManga.format ? newManga.format : 'Unknown';

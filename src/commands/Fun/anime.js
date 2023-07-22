@@ -4,7 +4,7 @@ const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, Ac
 
 const anilist_node = require('anilist-node');
 const aniList = new anilist_node();
-const { toTitleCase, formatDate } = require('../../utils/stringUtils');
+const { titleCase, formatDate } = require('../../utils/stringUtils');
 
 module.exports = {
 	name: 'anime',
@@ -29,7 +29,7 @@ module.exports = {
 				let englishTitle = anime.title.english ? anime.title.english : '';
 				let romajiTitle = anime.title.romaji ? anime.title.romaji : '';
 				let nativeTitle = anime.title.native ? anime.title.native : '';
-				let status = anime.status ? toTitleCase(anime.status) : 'Unknown';
+				let status = anime.status ? titleCase(anime.status) : 'Unknown';
 				let format = anime.format ? anime.format : 'Unknown';
 				let episodes = anime.episodes ? anime.episodes : 'Unknown';
 				let studioNames = anime.studios.map(studio => studio.isAnimationStudio ? `[${studio.name}](https://anilist.co/studio/${studio.id})` : '').filter(studio => studio !== '').join(', ');
@@ -86,7 +86,7 @@ ${description}`);
 								englishTitle = newAnime.title.english ? newAnime.title.english : '';
 								romajiTitle = newAnime.title.romaji ? newAnime.title.romaji : '';
 								nativeTitle = newAnime.title.native ? newAnime.title.native : '';
-								status = newAnime.status ? toTitleCase(newAnime.status) : 'Unknown';
+								status = newAnime.status ? titleCase(newAnime.status) : 'Unknown';
 								format = newAnime.format ? newAnime.format : 'Unknown';
 								episodes = newAnime.episodes ? newAnime.episodes : 'Unknown';
 								studioNames = newAnime.studios.map(studio => studio.isAnimationStudio ? `[${studio.name}](https://anilist.co/studio/${studio.id})` : '').filter(studio => studio !== '').join(', ');
