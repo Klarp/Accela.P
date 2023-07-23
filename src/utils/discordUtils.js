@@ -18,12 +18,20 @@ module.exports = {
 			}
 		}));
 
-		if (rank === 0 || rank === null || rank === undefined) {
+		if (rank === undefined) {
+			// If the rank is undefined, do not assign any role
+			console.log('No rank found for user. No role assigned.');
+			return;
+		}
+
+		if (rank === 0 || rank === null) {
+			// If the rank is 0 or null, assign the max role
 			const maxRole = roleIds[mode][roleIds[mode].length - 1];
 			if (!maxRole) {
 				console.error(`No max role found for mode ${mode}.`);
 				return;
 			}
+			console.log(`Rank is 0 or null for mode ${mode}. Assigning max role.`);
 			return member.roles.add(maxRole);
 		}
 
@@ -35,7 +43,6 @@ module.exports = {
 			console.log(`Rank ${rank} for mode ${mode} is greater than any defined rank. Assigning max role.`);
 			return member.roles.add(maxRole);
 		}
-
 		const targetRole = roleIds[mode][roleIndex];
 		console.log(targetRole);
 		if (!targetRole) {
