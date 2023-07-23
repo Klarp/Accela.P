@@ -19,7 +19,7 @@ const generateHelpEmbed = (client, prefix) => {
 			{ name: 'Fun', value : `\`${prefix}help fun\``, inline: true },
 			{ name: 'Utility', value: `\`${prefix}help utility\``, inline: true },
 		])
-		.setFooter({ value: `You can use ${prefix}help [command name] to get info on a specific command!` });
+		.setFooter({ text: `You can use ${prefix}help [command name] to get info on a specific command!` });
 };
 
 module.exports = {

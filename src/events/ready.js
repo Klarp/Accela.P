@@ -1,9 +1,101 @@
 // Copyright (C) 2023 Brody Jagoe
+const cron = require('node-cron');
+const osu = require('node-osu');
+const { Users } = require('../../database/dbObjects');
+const { osu_key } = require('../../config.json');
+const { updateRankRole } = require('../utils/discordUtils');
+const osuApi = new osu.Api(osu_key);
 
 module.exports = {
 	name: 'ready',
 	once: true,
 	async execute(client) {
+		let storedUsers = await Users.findAll();
+		storedUsers = storedUsers
+			.filter(u => u.get('verified_id'))
+			.filter(u => u.verified_id !== null)
+			.filter(u => client.users.cache.has(u.get('user_id')));
+
+		client.updateRanks = async () => {
+			for (let i = 0; i < Math.min(275, storedUsers.length); i++) {
+				const user = storedUsers[i];
+				const osuGame = client.guilds.cache.get('98226572468690944');
+
+				const newRanks = {
+					standard: 0,
+					taiko: 0,
+					mania: 0,
+					catch: 0,
+				};
+				for (let mode = 0; mode < 4; mode++) {
+					const osuID = user.get('verified_id');
+					const userID = user.get('user_id');
+					const userMode = user.get('mode');
+
+					try {
+						const osuUser = await osuApi.getUser({ u: osuID, m: mode });
+						switch (mode) {
+						case 0:
+							newRanks.standard = osuUser.pp.rank;
+							break;
+						case 1:
+							newRanks.taiko = osuUser.pp.rank;
+							break;
+						case 2:
+							newRanks.catch = osuUser.pp.rank;
+							break;
+						case 3:
+							newRanks.mania = osuUser.pp.rank;
+							break;
+						}
+					} catch (e) {
+						console.error(`Error getting user data for user <@${osuID}>:`, e);
+						continue;
+					}
+
+					try {
+						const updateUser = await Users.update({
+							std_rank: newRanks.standard,
+							taiko_rank: newRanks.taiko,
+							catch_rank: newRanks.catch,
+							mania_rank: newRanks.mania,
+						},
+						{
+							where: { user_id: userID },
+						});
+						if (updateUser > 0) {
+							let rank;
+							switch (userMode) {
+							case 0:
+								rank = newRanks.standard;
+								break;
+							case 1:
+								rank = newRanks.taiko;
+								break;
+							case 2:
+								rank = newRanks.catch;
+								break;
+							case 3:
+								rank = newRanks.mania;
+								break;
+							}
+
+							const osuMember = osuGame.members.cache.get(userID);
+							if (osuMember) {
+								updateRankRole(osuMember, rank, mode);
+							}
+						}
+					} catch (e) {
+						console.error(`Error updating user ${userID}:`, e);
+					}
+				}
+
+				osuGame.channels.cache.get('776522946872344586').send(`Updated ranks for user <@${user.get('user_id')}>: ${JSON.stringify(newRanks)}`);
+			}
+		};
+
+		cron.schedule('0 0 * * *', client.updateRanks);
+
 		const activities_list = [
 			'osu!',
 			'Let\'s All Love Lain',

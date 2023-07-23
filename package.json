@@ -1,6 +1,6 @@
 {
   "name": "accela",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "osu! and moderation bot",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "git": "^0.1.5",
     "got": "^12.6.0",
     "log-symbols": "^5.0.0",
+    "node-cron": "^3.0.2",
     "node-osu": "^2.2.1",
     "node-pre-gyp": "^0.17.0",
     "nodemon": "^2.0.21",

@@ -11,9 +11,15 @@ module.exports = {
 
 	// Get role based on rank
 	updateRankRole: async (member, rank, mode) => {
+		const roleList = Object.values(roleIds).flat();
+		await Promise.all(roleList.map(r => {
+			if (member.roles.cache.has(r)) {
+				member.roles.remove(r);
+			}
+		}));
+
 		if (rank === 0 || rank === null || rank === undefined) {
 			const maxRole = roleIds[mode][roleIds[mode].length - 1];
-			console.log(maxRole);
 			if (!maxRole) {
 				console.error(`No max role found for mode ${mode}.`);
 				return;
@@ -30,12 +36,6 @@ module.exports = {
 			return member.roles.add(maxRole);
 		}
 
-		const roleList = Object.values(roleIds).flat();
-		await Promise.all(roleList.map(r => {
-			if (member.roles.cache.has(r)) {
-				return member.roles.remove(r);
-			}
-		}));
 		const targetRole = roleIds[mode][roleIndex];
 		console.log(targetRole);
 		if (!targetRole) {
