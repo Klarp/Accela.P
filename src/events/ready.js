@@ -21,7 +21,12 @@ module.exports = {
 				const user = storedUsers[i];
 				const osuGame = client.guilds.cache.get('98226572468690944');
 
-				const newRanks = [0, 0, 0, 0];
+				const newRanks = {
+					standard: 0,
+					taiko: 0,
+					mania: 0,
+					catch: 0,
+				};
 
 				const osuID = user.get('verified_id');
 				const userID = user.get('user_id');
@@ -37,10 +42,10 @@ module.exports = {
 
 				try {
 					const updateUser = await Users.update({
-						std_rank: newRanks[0],
-						taiko_rank: newRanks[1],
-						catch_rank: newRanks[2],
-						mania_rank: newRanks[3],
+						std_rank: newRanks.standard,
+						taiko_rank: newRanks.taiko,
+						catch_rank: newRanks.catch,
+						mania_rank: newRanks.mania,
 					},
 					{
 						where: { user_id: userID },
