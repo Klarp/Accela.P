@@ -11,6 +11,37 @@ module.exports = {
 
 	// Get role based on rank
 	updateRankRole: async (member, rank, mode) => {
+		if (rank === 0 || rank === null || rank === undefined || rank > ranks[mode][ranks[mode].length - 1]) {
+			const maxRole = roleIds[mode][roleIds[mode].length - 1];
+			if (member.roles.cache.has(maxRole)) {
+				console.log(`User already has max role for mode ${mode}. No need to update.`);
+				return;
+			}
+
+			// Remove all rank roles
+			const roleList = Object.values(roleIds).flat();
+			await Promise.all(roleList.map(r => {
+				if (member.roles.cache.has(r)) {
+					member.roles.remove(r);
+				}
+			}));
+
+			if (!maxRole) {
+				console.error(`No max role found for mode ${mode}.`);
+				return;
+			}
+			return member.roles.add(maxRole);
+		}
+
+		const roleIndex = ranks[mode].findIndex(r => rank < r);
+		const targetRole = roleIds[mode][roleIndex];
+
+		if (member.roles.cache.has(targetRole)) {
+			console.log(`User already has target role for mode ${mode} and rank ${rank}. No need to update.`);
+			return;
+		}
+
+		// Remove all rank roles
 		const roleList = Object.values(roleIds).flat();
 		await Promise.all(roleList.map(r => {
 			if (member.roles.cache.has(r)) {
@@ -18,33 +49,6 @@ module.exports = {
 			}
 		}));
 
-		if (rank === undefined) {
-			// If the rank is undefined, do not assign any role
-			console.log('No rank found for user. No role assigned.');
-			return;
-		}
-
-		if (rank === 0 || rank === null) {
-			// If the rank is 0 or null, assign the max role
-			const maxRole = roleIds[mode][roleIds[mode].length - 1];
-			if (!maxRole) {
-				console.error(`No max role found for mode ${mode}.`);
-				return;
-			}
-			console.log(`Rank is 0 or null for mode ${mode}. Assigning max role.`);
-			return member.roles.add(maxRole);
-		}
-
-		const roleIndex = ranks[mode].findIndex(r => rank < r);
-
-		// Check if rank is greater than any rank in the ranks array
-		if (roleIndex === -1) {
-			const maxRole = roleIds[mode][roleIds[mode].length - 1];
-			console.log(`Rank ${rank} for mode ${mode} is greater than any defined rank. Assigning max role.`);
-			return member.roles.add(maxRole);
-		}
-		const targetRole = roleIds[mode][roleIndex];
-		console.log(targetRole);
 		if (!targetRole) {
 			console.error(`No role found for mode ${mode} and role index ${roleIndex}.`);
 			return;
