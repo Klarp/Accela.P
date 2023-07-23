@@ -21,73 +21,39 @@ module.exports = {
 				const user = storedUsers[i];
 				const osuGame = client.guilds.cache.get('98226572468690944');
 
-				const newRanks = {
-					standard: 0,
-					taiko: 0,
-					mania: 0,
-					catch: 0,
-				};
-				for (let mode = 0; mode < 4; mode++) {
-					const osuID = user.get('verified_id');
-					const userID = user.get('user_id');
-					const userMode = user.get('mode');
+				const newRanks = [0, 0, 0, 0];
 
-					try {
-						const osuUser = await osuApi.getUser({ u: osuID, m: mode });
-						switch (mode) {
-						case 0:
-							newRanks.standard = osuUser.pp.rank;
-							break;
-						case 1:
-							newRanks.taiko = osuUser.pp.rank;
-							break;
-						case 2:
-							newRanks.catch = osuUser.pp.rank;
-							break;
-						case 3:
-							newRanks.mania = osuUser.pp.rank;
-							break;
+				const osuID = user.get('verified_id');
+				const userID = user.get('user_id');
+				const userMode = user.get('mode');
+
+				try {
+					const osuUser = await osuApi.getUser({ u: osuID, m: userMode });
+					newRanks[userMode] = osuUser.pp.rank;
+				} catch (e) {
+					console.error(`Error getting user data for user <@${osuID}>:`, e);
+					continue;
+				}
+
+				try {
+					const updateUser = await Users.update({
+						std_rank: newRanks[0],
+						taiko_rank: newRanks[1],
+						catch_rank: newRanks[2],
+						mania_rank: newRanks[3],
+					},
+					{
+						where: { user_id: userID },
+					});
+					if (updateUser > 0) {
+						const rank = newRanks[userMode];
+						const osuMember = osuGame.members.cache.get(userID);
+						if (osuMember) {
+							await updateRankRole(osuMember, rank, userMode);
 						}
-					} catch (e) {
-						console.error(`Error getting user data for user <@${osuID}>:`, e);
-						continue;
 					}
-
-					try {
-						const updateUser = await Users.update({
-							std_rank: newRanks.standard,
-							taiko_rank: newRanks.taiko,
-							catch_rank: newRanks.catch,
-							mania_rank: newRanks.mania,
-						},
-						{
-							where: { user_id: userID },
-						});
-						if (updateUser > 0) {
-							let rank;
-							switch (userMode) {
-							case 0:
-								rank = newRanks.standard;
-								break;
-							case 1:
-								rank = newRanks.taiko;
-								break;
-							case 2:
-								rank = newRanks.catch;
-								break;
-							case 3:
-								rank = newRanks.mania;
-								break;
-							}
-
-							const osuMember = osuGame.members.cache.get(userID);
-							if (osuMember) {
-								updateRankRole(osuMember, rank, mode);
-							}
-						}
-					} catch (e) {
-						console.error(`Error updating user ${userID}:`, e);
-					}
+				} catch (e) {
+					console.error(`Error updating user ${userID}:`, e);
 				}
 
 				osuGame.channels.cache.get('776522946872344586').send(`Updated ranks for user <@${user.get('user_id')}>: ${JSON.stringify(newRanks)}`);
