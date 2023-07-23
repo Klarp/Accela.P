@@ -1,20 +1,21 @@
 // Copyright (C) 2023 Brody Jagoe
-const cron = require('node-cron');
-const osu = require('node-osu');
-const { Users } = require('../../database/dbObjects');
-const { osu_key } = require('../../config.json');
-const { updateRankRole } = require('../utils/discordUtils');
-const osuApi = new osu.Api(osu_key);
+// const cron = require('node-cron');
+// const osu = require('node-osu');
+// const { Users } = require('../../database/dbObjects');
+// const { osu_key } = require('../../config.json');
+// const { updateRankRole } = require('../utils/discordUtils');
+// const osuApi = new osu.Api(osu_key);
 
 module.exports = {
 	name: 'ready',
 	once: true,
 	async execute(client) {
+		/*
 		let storedUsers = await Users.findAll();
 		storedUsers = storedUsers
 			.filter(u => u.get('verified_id'))
 			.filter(u => u.verified_id !== null)
-			.filter(u => client.users.cache.has(u.get('user_id')));
+			.filter(u => client.users.cache.has(u.get('user_id')));\
 
 		client.updateRanks = async () => {
 			for (let i = 0; i < Math.min(275, storedUsers.length); i++) {
@@ -66,6 +67,7 @@ module.exports = {
 		};
 
 		cron.schedule('0 0 * * *', client.updateRanks);
+		*/
 
 		const activities_list = [
 			'osu!',
