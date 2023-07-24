@@ -30,7 +30,7 @@
     "node-cron": "^3.0.2",
     "node-osu": "^2.2.1",
     "node-pre-gyp": "^0.17.0",
-    "nodemon": "^2.0.21",
+    "nodemon": "^3.0.0",
     "ojsama": "^2.2.0",
     "osu-pp-calculator": "^0.1.7",
     "prom-client": "^14.2.0",
