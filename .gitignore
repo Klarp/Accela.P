@@ -4,3 +4,4 @@ config.json
 *.bat
 *.txt
 tests
+src/commands/Fun/explore.js

@@ -11,6 +11,7 @@ module.exports = {
 
 	// Get role based on rank
 	updateRankRole: async (member, rank, mode) => {
+		console.log(`user: ${member.user.username} | rank: ${rank} | mode: ${mode}`);
 		if (rank === 0 || rank === null || rank === undefined || rank > ranks[mode][ranks[mode].length - 1]) {
 			const maxRole = roleIds[mode][roleIds[mode].length - 1];
 			if (member.roles.cache.has(maxRole)) {

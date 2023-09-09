@@ -27,6 +27,9 @@ const getUserRanks = async (osuApi, osuId) => {
 	return rankResults;
 };
 
+// Mode mapping
+const modeMapping = ['std', 'taiko', 'ctb', 'mania'];
+
 module.exports = {
 	name: 'update',
 	description: 'Updates Accela\'s verification',
@@ -86,8 +89,9 @@ module.exports = {
 						if (mode === 2 && ctb_rank !== null) rank = ctb_rank;
 						if (mode === 3 && mania_rank !== null) rank = mania_rank;
 						const osuMember = osuGame.members.cache.get(userID);
-						if (osuMember) {
-							updateRankRole(osuMember, rank, mode);
+						if (osuMember && rank && mode !== undefined) {
+							const mappedMode = modeMapping[mode.toString()];
+							updateRankRole(osuMember, rank, mappedMode);
 							logChannel.send(`**Updating ${message.author}**`);
 						}
 					}
@@ -159,8 +163,9 @@ osu!mania: ${mania_rank}`);
 						if (mode === 3 && mania_rank !== null) rank = mania_rank;
 						const osuMember = osuGame.members.cache.get(userID);
 						if (osuMember) {
-							updateRankRole(osuMember, rank, mode);
-							logChannel.send(`**Force Updating ${findUser}**`);
+							console.log(`mode: ${mode.toString()}`);
+							updateRankRole(osuMember, rank, mode.toString());
+							logChannel.send(`**Updating ${findUser}**`);
 						}
 					}
 
@@ -175,7 +180,7 @@ osu!mania: ${mania_rank}`);
 
 					const updateEmbed = new EmbedBuilder()
 						.setTitle('Verification Update')
-						.setAuthor({ name: findUser.username })
+						.setAuthor({ name: findUser.tag })
 						.setColor(0xaf152a)
 						.setDescription(`Mode: ${osuMode}
 osu!std: ${std_rank}

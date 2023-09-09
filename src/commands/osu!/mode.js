@@ -25,12 +25,19 @@ module.exports = {
 
 		const modeNums = {
 			'std': 0,
+			'standard': 0,
 			'taiko': 1,
 			'ctb': 2,
-			'mania': 3,
-			'standard': 0,
 			'catch the beat': 2,
 			'catch': 2,
+			'mania': 3,
+		};
+
+		const modeNames = {
+			0: 'std',
+			1: 'taiko',
+			2: 'ctb',
+			3: 'mania',
 		};
 
 		const modes = ['std', 'taiko', 'ctb', 'mania', 'standard', 'catch the beat', 'catch'];
@@ -137,7 +144,8 @@ module.exports = {
 					return message.reply('Error: "Something" wen\'t wrong.');
 				}
 			});
-			updateRankRole(message.member, rank, userMode);
+			const modeName = modeNames[userMode];
+			updateRankRole(message.member, rank, modeName);
 		}
 	},
 };

@@ -104,15 +104,15 @@ ${description}`);
 									.setThumbnail(newAnime.coverImage.large)
 									.setDescription(`${englishTitle}
 
-								**Status:** ${status} | **Format:** ${format} | **Episodes:** ${episodes}
-									**Studio:** ${studioNames} | **Average Score:** ${avgScore}
-									**Genres:** ${genres}
+**Status:** ${status} | **Format:** ${format} | **Episodes:** ${episodes}
+**Studio:** ${studioNames} | **Average Score:** ${avgScore}
+**Genres:** ${genres}
 
-									**Start Date:** ${startDate}
-									**End Date:** ${endDate}
+**Start Date:** ${startDate}
+**End Date:** ${endDate}
 
-									**Description**
-									${description}`);
+**Description**
+${description}`);
 
 								await i.update({ embeds: [animeEmbed] });
 							}).catch(async err => {

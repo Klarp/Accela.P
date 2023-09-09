@@ -36,7 +36,7 @@ module.exports = {
 		*/
 
 		// Private Test
-		// if (message.author.id !== '186493565445079040') return;
+		if (message.author.id !== '186493565445079040') return;
 
 
 		const args = message.content.slice(prefix.length).split(/ +/);

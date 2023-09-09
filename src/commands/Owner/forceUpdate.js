@@ -4,6 +4,13 @@ module.exports = {
 	module: 'Owner',
 	owner: true,
 	async execute(message) {
-		message.client.updateRanks();
+		console.log(typeof message.client.updateRanks);
+		try {
+			console.log('Forceupdate command called');
+			await message.client.updateRanks();
+			console.log('Forceupdate command executed successfully');
+		} catch (error) {
+			console.error('Error executing forceupdate command:', error);
+		}
 	},
 };
