@@ -1,15 +1,18 @@
 // Copyright (C) 2023 Brody Jagoe
+/*
 const cron = require('node-cron');
-const osu = require('node-osu');
 const { Users } = require('../../database/dbObjects');
 const { osu_key } = require('../../config.json');
 const { updateRankRole } = require('../utils/discordUtils');
+const osu = require('node-osu');
 const osuApi = new osu.Api(osu_key);
+*/
 
 module.exports = {
 	name: 'ready',
 	once: true,
 	async execute(client) {
+		/*
 		let storedUsers = await Users.findAll();
 		const userIdSet = new Set();
 
@@ -83,9 +86,8 @@ module.exports = {
 			await processWithLimitedConcurrency(storedUsers.slice(0, 275), 20);
 		};
 
-		console.log(typeof client.updateRanks);
-
 		cron.schedule('0 0 * * *', client.updateRanks);
+		*/
 
 		const activities_list = [
 			'osu!',
@@ -111,6 +113,7 @@ module.exports = {
 			'in your walls',
 			'with my souls',
 			'in Klarp\'s computer',
+			'in limited form',
 		];
 
 		// Rotate through activities

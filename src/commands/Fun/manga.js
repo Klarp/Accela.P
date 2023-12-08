@@ -60,6 +60,18 @@ module.exports = {
 ${description}`);
 				const mangaMenu = [];
 				for (let i = 0; i < mangaData.media.length; i++) {
+					if (mangaData.media[i].title.romaji.length > 100) {
+						mangaData.media[i].title.romaji = mangaData.media[i].title.romaji.substring(0, 97) + '...';
+					}
+					if (mangaData.media[i].title.english) {
+						if (mangaData.media[i].title.english.length > 100) {
+							mangaData.media[i].title.english = mangaData.media[i].title.english.substring(0, 97) + '...';
+						}
+					} else if (mangaData.media[i].title.native) {
+						if (mangaData.media[i].title.native.length > 100) {
+							mangaData.media[i].title.native = mangaData.media[i].title.native.substring(0, 97) + '...';
+						}
+					}
 					const menu = new StringSelectMenuOptionBuilder()
 						.setLabel(mangaData.media[i].title.romaji)
 						.setValue(`page_${i + 1}`)
