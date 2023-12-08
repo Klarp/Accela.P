@@ -48,7 +48,7 @@ module.exports = {
 					.setDescription(`${englishTitle}
 		
 **Status:** ${status} | **Format:** ${format} | **Average Score:** ${avgScore}
-**Staff:** ${staffNames} filter
+**Staff:** ${staffNames}
 **Genres:** ${genres}
 
 **Volumes:** ${volumes} | **Chapters:** ${chapters}
