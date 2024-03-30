@@ -59,9 +59,9 @@ ${description}`);
 				const animeMenu = [];
 				for (let i = 0; i < animeData.media.length; i++) {
 					const menu = new StringSelectMenuOptionBuilder()
-						.setLabel(animeData.media[i].title.romaji)
+						.setLabel(animeData.media[i].title.romaji || 'No title')
 						.setValue(`page_${i + 1}`)
-						.setDescription(animeData.media[i].title.english ? animeData.media[i].title.english : animeData.media[i].title.native);
+						.setDescription(animeData.media[i].title.english ? animeData.media[i].title.english : animeData.media[i].title.native || 'No alternative title');
 					animeMenu.push(menu);
 				}
 
