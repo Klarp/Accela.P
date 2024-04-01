@@ -21,6 +21,7 @@ module.exports = {
 		};
 
 		aniList.searchEntry.anime(animeName, animeFilter, 1, 5).then(animeData => {
+
 			if (animeData.media.length === 0) {
 				return message.reply('No results found');
 			}
@@ -58,10 +59,11 @@ module.exports = {
 ${description}`);
 				const animeMenu = [];
 				for (let i = 0; i < animeData.media.length; i++) {
+					const menuLabel = animeData.media[i].title.romaji.length > 100 ? animeData.media[i].title.romaji.substring(0, 99) : animeData.media[i].title.romaji;
 					const menu = new StringSelectMenuOptionBuilder()
-						.setLabel(animeData.media[i].title.romaji || 'No title')
+						.setLabel(menuLabel || 'No title')
 						.setValue(`page_${i + 1}`)
-						.setDescription(animeData.media[i].title.english ? animeData.media[i].title.english : animeData.media[i].title.native || 'No alternative title');
+						.setDescription(animeData.media[i].title ? animeData.media[i].title.native : animeData.media[i].title.english || 'No alternative title');
 					animeMenu.push(menu);
 				}
 
