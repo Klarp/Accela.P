@@ -13,7 +13,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@discordjs/rest": "^1.6.0",
-    "@mapbox/node-pre-gyp": "^1.0.7",
+    "@mapbox/node-pre-gyp": "^2.0.0",
     "@sentry/browser": "^7.44.1",
     "@sentry/node": "^7.44.1",
     "@sentry/tracing": "^7.44.1",
