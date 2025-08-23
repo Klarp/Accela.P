@@ -37,7 +37,7 @@
     "prom-client": "^14.2.0",
     "queue-system": "^4.1.1",
     "sequelize": "^6.29.3",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.9",
